@@ -1,8 +1,3 @@
-* abt this
-This is my config file. At time of writing, it's about 500 lines (whoop comin up
-on 1000 now). There's lots of stuff in here. I stole nearly all of it. You're
-free to steal it from me, and that makes it fair! Not really, but in this case
-that's true. I hope you get useful stuff. Too da loo ;)
 * configure =use-package= and path
 ** Do the stuff
 =use-package= is 'require on [[https://duckduckgo.com/?q=usepackage+emacs&t=brave&ia=software][steroids]]. It downloads things for me. Yay.

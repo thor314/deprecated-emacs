@@ -1,0 +1,35 @@
+* I said, what is this
+This is my emacs config. I scrounged around the internet for stuff I wanted, and
+it landed here. It's in a .org file because organization is good. I could
+organize it in a bunch of little .el files. That would be more annoying to
+navigate, in my opinion. Most of the packages I use, I include a link to the
+documentation for, making it easy for myself (and possibly others) to use my
+config reasonably efficiently for reference.
+
+If you're starting out with emacs, advice: if you're gonna copy paste others'
+configs (and you should), don't do it all at once. Incrementalism and consistent
+documentation is good. Cruft you forget about don't ever use isn't necessarily
+bad (unless you inflict it on others), but it's not your best life.
+
+Also, if you're starting out, some packages I particularly recommend learning to
+use (search em or steal em from me):
+- =ivy-mode=, with =ivy-rich= and =counsel=, for better navigation/information
+  inside emacs
+- =use-package= in place of 'require for installing packages
+- =which-key= will show you your keybinds
+- =sensible-defaults= does what it says on the box
+- when you're ready, =org-mode=, with all it's extensions is a reason onto
+  itself to use emacs.
+
+A last bit of advice, emacs can eat up stupid amounts your time if you let it.
+Skills that are incidentally useful when emacs-ing:
+- Learn how to selectively steal bits of others' configurations that you need
+  for a quick fix
+- Learn to use =customize/customize-group= to lazily modify variables without
+  resorting to the documentation
+- Learn how to selectively find the information you need from the documentation
+  on a need-to-know basis. Ex: emacs-manual, org-manual, elisp, ivy, are all fat
+  packages.
+- Learn when it's time to just read the documentation and become a super user.
+- Lisp is an easy language to pick up, but it's also fairly unnecessary to know
+  for the most part when using Emacs. Don't rush into it.
