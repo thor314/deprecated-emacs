@@ -571,6 +571,14 @@ time-prompt, tree-type, table-line-pos
 #+end_src
 
 *** Org-clock configuration
+**** keybind
+#+begin_src emacs-lisp
+	(add-hook 'org-mode-hook
+				(lambda ()
+					(local-set-key (kbd "C-c C-x C-l") 'org-clock-in-last)
+	))
+#+end_src
+
 **** propmt to resolve idle time after 15 idle minutes
 [[https://orgmode.org/manual/Resolving-idle-time.html#Resolving-idle-time][manual]] : if idle, eg did nothing for 20 minutes, emacs can prompt about weird
 timers and idle time. Usually, respond to prompt with 's/k', or 'S/K' to then
@@ -742,6 +750,15 @@ Again courtesy of Sacha Chua
 (setq-default tab-width 2)
 #+end_src
 
+** yasnippet code snippets C-9
+[[https://github.com/joaotavora/yasnippet][yasnippet docs]], [[https://github.com/AndreaCrotti/yasnippet-snippets][snippets sold separately]]
+#+begin_src emacs-lisp
+(use-package yasnippet)
+(use-package yasnippet-snippets)
+(yas-reload-all) ; reload snippet tables
+(add-hook 'prog-mode-hook #'yas-minor-mode)
+(global-set-key (kbd "C-9") 'yas-insert-snippet)
+#+end_src
 ** =flycheck= linter for most things. Mg n/p=nxt/prev err
 new: want flycheck keys
 just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-interaction.html][is something already done for me]].
@@ -966,7 +983,9 @@ features, like preview TeX equations within buffers. Use =preview-latex=.
 The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.index.html][here]].
 
 * Random quick answers to questions
-	There is no difference between `global-set-key` and `define-key global-map`.
+- There is no difference between `global-set-key` and `define-key global-map`.
+- what is #'<function>? add-hook 'blah-hook #'<function> = this is a function;
+  which is why we use it when adding hooks.
 * Graveyard
 ** exec-path-from-shell
 [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] is supposed to be good to have around when I see the text

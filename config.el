@@ -146,12 +146,12 @@
 (setq subword-mode t)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
-      (global-linum-mode 1)
-      (global-hl-line-mode)
-      (setq electric-pair-mode 1)
-      (use-package diff-hl
+(global-linum-mode 1)
+(global-hl-line-mode)
+(setq electric-pair-mode 1)
+(use-package diff-hl
 :config
-      (global-diff-hl-mode))
+(global-diff-hl-mode))
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -237,6 +237,9 @@
 (use-package re-builder)
 (setq reb-re-syntax 'string)
 
+(use-package notmuch)
+(autoload 'notmuch "notmuch" "notmuch mail" t) ;
+
 (use-package simpleclip)
 (simpleclip-mode 1)
 
@@ -275,6 +278,11 @@
 			"* TODO \t %? :RSCH:\nAdded: %u" :empty-lines 1 )
 		 ("i" "Idea" entry (file "~/org/ideas.org")
 			"* \t %? :IDEA:\nAdded: %u" )
+))
+
+(add-hook 'org-mode-hook
+			(lambda ()
+				(local-set-key (kbd "C-c C-x C-8") 'org-clock-in-last)
 ))
 
 (setq org-clock-idle-teme 15) ;prompt after 15 idle minutes.
@@ -325,7 +333,7 @@
 				("l" "lit" plain (function org-roam--capture-get-point)
 				 "%?"
 				 :file-name "lit/${slug}"
-			   :head "#+title: ${title}\n"
+				 :head "#+title: ${title}\n"
 				 :unnarrowed t)))
  (setq org-roam-capture-ref-templates ; unclear what this is doing
 				'(("r" "ref" plain (function org-roam-capture--get-point)
@@ -353,7 +361,7 @@
 
 (use-package rust-mode
   :config
-	      (hrs/append-to-path "/Users/thor/.cargo/bin")
+	(hrs/append-to-path "/Users/thor/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package racer)
@@ -398,8 +406,8 @@
 (setq company-idle-delay .2)        ; decrease delay before autocompletion popup shows
 
 (setenv "GOPATH" "/Users/thor/go")
-	(hrs/append-to-path (concat (getenv "GOPATH") "/bin")) ; user gopath
-;	(hrs/append-to-path "/usr/local/go/bin") ; other shit that we like
+(hrs/append-to-path (concat (getenv "GOPATH") "/bin")) ; user gopath
+(hrs/append-to-path "/usr/local/go/bin") ; other shit that we like
 
 (setq gofmt-command "goimports")
 (add-hook 'before-save-hook 'gofmt-before-save)
@@ -440,6 +448,9 @@
 (use-package flycheck-package)
 (eval-after-load 'flycheck
   '(flycheck-package-setup))
+
+(use-package company-shell)
+(add-to-list 'company-backends 'company-shell)
 
 ;  (use-package auctex)
 ; Error (use-package): ; auctex/:catch: Loading file /Users/thor/.emacs.d/elpa/auctex-12.2.4/auctex.elc failed to provide feature auctex

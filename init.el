@@ -73,7 +73,7 @@
  '(org-roam-directory "~/org/roam")
  '(package-selected-packages
 	 (quote
-		(company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
+		(yasnippet-snippets company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
  '(setq "%<%Y%m%d%H%M%S>" t)
  '(user-mail-address "thor314@gmail.com"))
  '(package-selected-packages
