@@ -282,7 +282,7 @@
 
 (add-hook 'org-mode-hook
 			(lambda ()
-				(local-set-key (kbd "C-c C-x C-8") 'org-clock-in-last)
+				(local-set-key (kbd "C-c C-x C-l") 'org-clock-in-last)
 ))
 
 (setq org-clock-idle-teme 15) ;prompt after 15 idle minutes.
@@ -352,6 +352,12 @@
 
 
 (setq-default tab-width 2)
+
+(use-package yasnippet)
+(use-package yasnippet-snippets)
+(yas-reload-all) ; reload snippet tables
+(add-hook 'prog-mode-hook #'yas-minor-mode)
+(global-set-key (kbd "C-9") 'yas-insert-snippet)
 
 (use-package flycheck
   :ensure t

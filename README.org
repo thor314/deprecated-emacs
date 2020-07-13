@@ -1,10 +1,11 @@
 * I said, what is this
 This is my emacs config. I scrounged around the internet for stuff I wanted, and
-it landed here. It's in a .org file because organization is good. I could
-organize it in a bunch of little .el files. That would be more annoying to
-navigate, in my opinion. Most of the packages I use, I include a link to the
-documentation for, making it easy for myself (and possibly others) to use my
-config reasonably efficiently for reference.
+like a good viking, dragged the good stuff back here. It's in a .org file
+because organization is good, and I like collapsable sectioning and pretty text.
+I could organize it in a bunch of little .el files. I find that more annoying to
+navigate, and half the files would be comments anyways. Most of the packages I
+use, I include a link to the documentation for, making it easy for myself (and
+possibly others) to use my config reasonably efficiently for reference.
 
 If you're starting out with emacs, advice: if you're gonna copy paste others'
 configs (and you should), don't do it all at once. Incrementalism and consistent
@@ -18,7 +19,7 @@ use (search em or steal em from me):
 - =use-package= in place of 'require for installing packages
 - =which-key= will show you your keybinds
 - =sensible-defaults= does what it says on the box
-- when you're ready, =org-mode=, with all it's extensions is a reason onto
+- when you're ready, =org-mode=, with all its extensions is a reason onto
   itself to use emacs.
 
 A last bit of advice, emacs can eat up stupid amounts your time if you let it.
