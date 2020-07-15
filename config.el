@@ -3,7 +3,6 @@
 
 (use-package auto-compile
   :config (auto-compile-on-load-mode))
-
 (setq load-prefer-newer t)
 
 (load-file "~/.emacs.d/sensible-defaults.el")
@@ -29,7 +28,7 @@
 (defun pedit ()
 	"shortcut to edit .profile"
 	(interactive)
-	(find-file "/Users/thor/.zprofile"))
+	(find-file "/Users/thor/.zshrc"))
 
 (defun describe-in-popup (fn)
   (let* ((thing (symbol-at-point))
@@ -94,18 +93,18 @@
     (thing-at-point 'word)))
 
 (defun hrs/append-to-path (path)
-  "Add a path both to the $PATH variable and to Emacs' exec-path."
-  (setenv "PATH" (concat (getenv "PATH") ":" path))
-  (add-to-list 'exec-path path))
+	"Add a path both to the $PATH variable and to Emacs' exec-path."
+	(setenv "PATH" (concat (getenv "PATH") ":" path))
+	(add-to-list 'exec-path path))
 
 (defun hrs/insert-password ()
-  (interactive)
-  (shell-command "pwgen 30 -1" t))
+	(interactive)
+	(shell-command "pwgen 30 -1" t))
 
 (defun hrs/notify-send (title message)
-  "Display a desktop notification by shelling out to `notify-send'."
-  (call-process-shell-command
-   (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
+	"Display a desktop notification by shelling out to `notify-send'."
+	(call-process-shell-command
+	 (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
 
 (fset 'tk-org-insert-lisp-block
    "#+begin_src emacs-lisp\C-m\C-m#+end_src\C-p")
@@ -116,6 +115,8 @@
 (global-set-key (kbd "<f3>") 'tk-org-insert-rust-block)
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
+(define-key global-map (kbd "<f10>") 'eshell-command)
+(define-key global-map (kbd "<f9>") 'eshell)
 
 (setq make-backup-files nil) ; none of these~
 (setq auto-save-default nil) ; none of these#
@@ -146,12 +147,12 @@
 (setq subword-mode t)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
-(global-linum-mode 1)
-(global-hl-line-mode)
-(setq electric-pair-mode 1)
-(use-package diff-hl
+      (global-linum-mode 1)
+      (global-hl-line-mode)
+      (setq electric-pair-mode 1)
+      (use-package diff-hl
 :config
-(global-diff-hl-mode))
+      (global-diff-hl-mode))
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -178,6 +179,21 @@
 (setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
       minions-mode-line-delimiters '("" . ""))
 (minions-mode 1))
+
+(dolist (hook '(text-mode-hook)) ; when entering text mode
+			(add-hook hook (lambda () (flyspell-mode 1)))) ; add hook to turn on flyspell
+(add-hook 'prog-mode-hook ; turn on flyspell in comments of programming modes
+					(lambda ()
+						(flyspell-prog-mode)
+					))
+(setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
+
+(use-package workgroups2)
+(workgroups-mode 1)
+(setq wg-prefix-key (kbd "C-c z")) ; set by default also
+(setq wg-session-file "~/.emacs.d/workgroups")
+;; hooks: workgroups-(exit-)?mode-hook
+;; wg-(before|after)-switch-to-workgroup-hook
 
 (use-package ivy)
 (use-package swiper) ; search extension to ivy
@@ -269,7 +285,7 @@
 		 ("M" "Main Dev" entry (file+headline "~/org/main.org" "Main")
 			"* TODO [#A] \t %? :MAIN:DEV:\nAdded: %u" :empty-lines 1 )
 		 ("R" "Main Rsch" entry (file+headline "~/org/main.org" "Main")
-			"* TODO [#A] \t %? :MAIN::RSCH:\nAdded: %u" :empty-lines 1 )
+			"* TODO [#A] \t %? :MAIN:RSCH:\nAdded: %u" :empty-lines 1 )
 		 ("e" "Emacs" entry (file+headline "~/org/emacs.org" "Emacs")
 			"* TODO \t %? :EMACS:\nAdded: %u" :empty-lines 1 )
 		 ("p" "Personal" entry (file+headline "~/org/pers.org" "Pers")
@@ -299,7 +315,8 @@
 ))
 (setq org-agenda-start-on-weekday nil) ; start today
 
-(org-agenda nil "a")
+(setq org-agenda-start-on-weekday nil)
+(setq org-agenda-start-with-clockreport-mode 1)
 
 (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
 
@@ -324,24 +341,23 @@
 ))
 
 (setq org-roam-capture--file-name-default "<%Y-%m%-%d>")
- (setq org-roam-capture-templates
-				'(("t" "temp" plain (function org-roam--capture-get-point)
+	 (setq org-roam-capture-templates
+					'(("p" "paper" plain (function org-roam--capture-get-point)
+						 "%?"
+						 :file-name "paper/${topic}/${subtopic}/${slug}"
+						 :head: "#+title: ${title}\n"
+						 :unnarrowed t)
+					("w" "web" plain (function org-roam--capture-get-point)
 					 "%?"
-					 :file-name "lit/${slug}"
-					 :head: "#+title: ${title}\n"
+					 :file-name "web/${topic}/${subtopic}/${slug}"
+					 :head "#+title: ${title}\n"
 					 :unnarrowed t)
-				("l" "lit" plain (function org-roam--capture-get-point)
-				 "%?"
-				 :file-name "lit/${slug}"
-				 :head "#+title: ${title}\n"
-				 :unnarrowed t)))
- (setq org-roam-capture-ref-templates ; unclear what this is doing
-				'(("r" "ref" plain (function org-roam-capture--get-point)
+					("b" "book" plain (function org-roam--capture-get-point)
 					 "%?"
-					 :file-name "lit/${slug}"
-					 :head "#+title: ${title}
-- source :: ${ref}"
-					 :unnarrowed t)))
+					 :file-name "book/${topic}/${slug}"
+					 :head "#+title: ${title}\n"
+					 :unnarrowed t)
+))
 
 (setq org-roam-graph-executable "/usr/local/bin/dot")
 (use-package graphviz-dot-mode
@@ -367,7 +383,7 @@
 
 (use-package rust-mode
   :config
-	(hrs/append-to-path "/Users/thor/.cargo/bin")
+	      (hrs/append-to-path "/Users/thor/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package racer)

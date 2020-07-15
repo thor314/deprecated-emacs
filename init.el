@@ -70,11 +70,12 @@
  '(nrepl-message-colors
 	 (quote
 		("#CC9393" "#DFAF8F" "#F0DFAF" "#488249" "#95d291" "#57a2a4" "#93E0E3" "#DC8CC3" "#bbb0cb")))
+ '(org-agenda-clockreport-parameter-plist (quote (:link t :maxlevel 2 :block today :scope agenda)))
  '(org-agenda-window-frame-fractions (quote (0.5 . 0.5)))
  '(org-roam-directory "~/org/roam")
  '(package-selected-packages
 	 (quote
-		(ob-go yasnippet-snippets company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
+		(workgroups2 ob-go yasnippet-snippets company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
  '(setq "%<%Y%m%d%H%M%S>" t)
  '(user-mail-address "thor314@gmail.com"))
  '(package-selected-packages

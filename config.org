@@ -102,7 +102,7 @@ reload, open config, open zsh profile
 	(defun pedit ()
 		"shortcut to edit .profile"
 		(interactive)
-		(find-file "/Users/thor/.zprofile"))
+		(find-file "/Users/thor/.zshrc"))
 #+end_src
 
 *** Better than C-h <blah>, get help for emacs-lisp thing at point in tooltip. C-h C-h.
@@ -179,19 +179,19 @@ Add entries to alist, sudo find
 
 append to path, insert generated password, display a desktop notification
 #+begin_src emacs-lisp
-  (defun hrs/append-to-path (path)
-    "Add a path both to the $PATH variable and to Emacs' exec-path."
-    (setenv "PATH" (concat (getenv "PATH") ":" path))
-    (add-to-list 'exec-path path))
+	(defun hrs/append-to-path (path)
+		"Add a path both to the $PATH variable and to Emacs' exec-path."
+		(setenv "PATH" (concat (getenv "PATH") ":" path))
+		(add-to-list 'exec-path path))
 
-  (defun hrs/insert-password ()
-    (interactive)
-    (shell-command "pwgen 30 -1" t))
+	(defun hrs/insert-password ()
+		(interactive)
+		(shell-command "pwgen 30 -1" t))
 
-  (defun hrs/notify-send (title message)
-    "Display a desktop notification by shelling out to `notify-send'."
-    (call-process-shell-command
-     (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
+	(defun hrs/notify-send (title message)
+		"Display a desktop notification by shelling out to `notify-send'."
+		(call-process-shell-command
+		 (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
 #+end_src
 
 ** Macro game going strong
@@ -212,10 +212,12 @@ My lisp and rust block macros
 Return and indent instead of just return
 #+begin_src emacs-lisp
 (define-key global-map (kbd "RET") 'newline-and-indent)
+(define-key global-map (kbd "<f10>") 'eshell-command)
+(define-key global-map (kbd "<f9>") 'eshell)
 #+end_src
 
 * Prettify emacs window appearance and general settings
-** Please done't create annoying .#<backup> files
+** Please don't create annoying .#<backup> files
 #+begin_src emacs-lisp
 (setq make-backup-files nil) ; none of these~
 (setq auto-save-default nil) ; none of these#
@@ -307,6 +309,31 @@ minions mode changes what minor are listed in the bar
   (setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
         minions-mode-line-delimiters '("" . ""))
   (minions-mode 1))
+#+end_src
+
+** Turn on flyspell check in text mode
+[[https://www.emacswiki.org/emacs/FlySpell][emacswiki flyspell]]
+#+begin_src emacs-lisp
+	(dolist (hook '(text-mode-hook)) ; when entering text mode
+				(add-hook hook (lambda () (flyspell-mode 1)))) ; add hook to turn on flyspell
+	(add-hook 'prog-mode-hook ; turn on flyspell in comments of programming modes
+						(lambda ()
+							(flyspell-prog-mode)
+						))
+	(setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
+#+end_src
+Toy with this for awhile, then try out [[https://github.com/d12frosted/flyspell-correct][flyspell-correct]] and [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-ivy-interface][ivy interface]] later
+[[http://ergoemacs.org/emacs/emacs_spell_checker_problems.html][Xah has problems and solutions with flyspell if these don't work.]]
+** work groups for remembering window setup ; Cc z [c/v/Cs/Cf]
+Want emacs to remember my window setup for stuff. Storing views in registers
+aren't persistent across sessions. [[https://github.com/pashinin/workgroups2][docs]].
+#+begin_src emacs-lisp
+	(use-package workgroups2)
+	(workgroups-mode 1)
+	(setq wg-prefix-key (kbd "C-c z")) ; set by default also
+	(setq wg-session-file "~/.emacs.d/workgroups")
+	;; hooks: workgroups-(exit-)?mode-hook
+	;; wg-(before|after)-switch-to-workgroup-hook
 #+end_src
 
 ** TODO Aspell - spellchecker for emacs - presently donked up and completely unfunctional
@@ -558,7 +585,7 @@ time-prompt, tree-type, table-line-pos
 			 ("M" "Main Dev" entry (file+headline "~/org/main.org" "Main")
 				"* TODO [#A] \t %? :MAIN:DEV:\nAdded: %u" :empty-lines 1 )
 			 ("R" "Main Rsch" entry (file+headline "~/org/main.org" "Main")
-				"* TODO [#A] \t %? :MAIN::RSCH:\nAdded: %u" :empty-lines 1 )
+				"* TODO [#A] \t %? :MAIN:RSCH:\nAdded: %u" :empty-lines 1 )
 			 ("e" "Emacs" entry (file+headline "~/org/emacs.org" "Emacs")
 				"* TODO \t %? :EMACS:\nAdded: %u" :empty-lines 1 )
 			 ("p" "Personal" entry (file+headline "~/org/pers.org" "Pers")
@@ -671,7 +698,8 @@ Again courtesy of Sacha Chua
 
 *** Open agenda on starting emacs
 #+begin_src emacs-lisp
-(org-agenda nil "a")
+(setq org-agenda-start-on-weekday nil)
+(setq org-agenda-start-with-clockreport-mode 1)
 #+end_src
 
 *** column view headings: Task Total-Time Time-Stamp, use Cc Cx Cc, q to exit
@@ -708,25 +736,24 @@ Again courtesy of Sacha Chua
 
 *** Set roam-capture templates
 #+begin_src emacs-lisp
-			 (setq org-roam-capture--file-name-default "<%Y-%m%-%d>")
-			 (setq org-roam-capture-templates
-							'(("t" "temp" plain (function org-roam--capture-get-point)
-								 "%?"
-								 :file-name "lit/${slug}"
-								 :head: "#+title: ${title}\n"
-								 :unnarrowed t)
-							("l" "lit" plain (function org-roam--capture-get-point)
-							 "%?"
-							 :file-name "lit/${slug}"
-						   :head "#+title: ${title}\n"
-							 :unnarrowed t)))
-			 (setq org-roam-capture-ref-templates ; unclear what this is doing
-							'(("r" "ref" plain (function org-roam-capture--get-point)
-								 "%?"
-								 :file-name "lit/${slug}"
-								 :head "#+title: ${title}
-			- source :: ${ref}"
-								 :unnarrowed t)))
+	 (setq org-roam-capture--file-name-default "<%Y-%m%-%d>")
+	 (setq org-roam-capture-templates
+					'(("p" "paper" plain (function org-roam--capture-get-point)
+						 "%?"
+						 :file-name "paper/${topic}/${subtopic}/${slug}"
+						 :head: "#+title: ${title}\n"
+						 :unnarrowed t)
+					("w" "web" plain (function org-roam--capture-get-point)
+					 "%?"
+					 :file-name "web/${topic}/${subtopic}/${slug}"
+					 :head "#+title: ${title}\n"
+					 :unnarrowed t)
+					("b" "book" plain (function org-roam--capture-get-point)
+					 "%?"
+					 :file-name "book/${topic}/${slug}"
+					 :head "#+title: ${title}\n"
+					 :unnarrowed t)
+))
 #+end_src
 
 *** relies on Graphviz for graph visualisation. CMq, TAB, M; CcCc, Cx `, Cc Cp, Cc v
