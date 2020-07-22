@@ -189,11 +189,11 @@
 (setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
 
 (use-package workgroups2)
-(workgroups-mode 1)
-(setq wg-prefix-key (kbd "C-c z")) ; set by default also
-(setq wg-session-file "~/.emacs.d/workgroups")
-;; hooks: workgroups-(exit-)?mode-hook
-;; wg-(before|after)-switch-to-workgroup-hook
+	(workgroups-mode 1)
+	(setq wg-prefix-key (kbd "C-c z")) ; set by default also
+;	(setq wg-session-file "~/.emacs.d/workgroups")
+	;; hooks: workgroups-(exit-)?mode-hook
+	;; wg-(before|after)-switch-to-workgroup-hook
 
 (use-package ivy)
 (use-package swiper) ; search extension to ivy
@@ -314,9 +314,6 @@
 							("m" "Research" tags-todo "MAIN")
 ))
 (setq org-agenda-start-on-weekday nil) ; start today
-
-(setq org-agenda-start-on-weekday nil)
-(setq org-agenda-start-with-clockreport-mode 1)
 
 (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
 

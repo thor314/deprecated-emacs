@@ -64,20 +64,23 @@
 	 (quote
 		("#3F3F3F" "#3F3F3F" "#3F3F3F" "#3F3F3F" "#3F3F3F" "#3F3F3F" "#3F3F3F" "#3F3F3F")))
  '(hl-paren-colors (quote ("#93E0E3" "#F0DFAF" "#8CD0D3" "#bbb0cb" "#7F9F7F")))
- '(notmuch-identities (quote ("thor314@gmail.com")))
+ '(notmuch-identities (quote ("thork@tuta.io")))
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-logo nil)
  '(nrepl-message-colors
 	 (quote
 		("#CC9393" "#DFAF8F" "#F0DFAF" "#488249" "#95d291" "#57a2a4" "#93E0E3" "#DC8CC3" "#bbb0cb")))
  '(org-agenda-clockreport-parameter-plist (quote (:link t :maxlevel 2 :block today :scope agenda)))
+ '(org-agenda-start-on-weekday nil t)
+ '(org-agenda-start-with-clockreport-mode t)
  '(org-agenda-window-frame-fractions (quote (0.5 . 0.5)))
  '(org-roam-directory "~/org/roam")
  '(package-selected-packages
 	 (quote
 		(workgroups2 ob-go yasnippet-snippets company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
  '(setq "%<%Y%m%d%H%M%S>" t)
- '(user-mail-address "thor314@gmail.com"))
+ '(user-mail-address "thork@tuta.io")
+ '(wg-session-file "~/.emacs.d/workgroups"))
  '(package-selected-packages
 	 (quote
 		(auctex ivy-rich which-key travis htmlize counsel-projectile projectile counsel swiper ivy ripgrep rg flycheck-inline-mode dumb-jump rust-playground ob-rust racer cargo company-rust deadgrep python-mode haskell-mode diff-hl minions solarized-theme simpleclip magit rust-mode flycheck-package rainbow-delimiters paredit flycheck use-package go-errcheck company-go auto-compile)))

@@ -331,13 +331,12 @@ aren't persistent across sessions. [[https://github.com/pashinin/workgroups2][do
 	(use-package workgroups2)
 	(workgroups-mode 1)
 	(setq wg-prefix-key (kbd "C-c z")) ; set by default also
-	(setq wg-session-file "~/.emacs.d/workgroups")
+;	(setq wg-session-file "~/.emacs.d/workgroups")
 	;; hooks: workgroups-(exit-)?mode-hook
 	;; wg-(before|after)-switch-to-workgroup-hook
 #+end_src
 
 ** TODO Aspell - spellchecker for emacs - presently donked up and completely unfunctional
-- State "TODO"       from              [2020-07-08 Wed 11:25]
 [[http://blog.binchen.org/posts/what-s-the-best-spell-check-set-up-in-emacs.html][Aspell source code from Chen Bin]],
 Usage: M-x ispell-word
 *** flyspell-detect-ispell-args
@@ -694,12 +693,6 @@ Again courtesy of Sacha Chua
 							("m" "Research" tags-todo "MAIN")
 ))
 (setq org-agenda-start-on-weekday nil) ; start today
-#+end_src
-
-*** Open agenda on starting emacs
-#+begin_src emacs-lisp
-(setq org-agenda-start-on-weekday nil)
-(setq org-agenda-start-with-clockreport-mode 1)
 #+end_src
 
 *** column view headings: Task Total-Time Time-Stamp, use Cc Cx Cc, q to exit
