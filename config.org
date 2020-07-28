@@ -87,22 +87,34 @@ reload, open config, open zsh profile
 	(defun reload ()
 		"shorcut to reload init file"
 		(interactive)
-		(load-file "/Users/thor/.emacs.d/init.el"))
+		(load-file "~/.emacs.d/init.el"))
 
 	(defun cedit ()
 		"shortcut to edit config.org file"
 		(interactive)
-		(find-file "/Users/thor/.emacs.d/config.org"))
+		(find-file "~/.emacs.d/config.org"))
 
 	(defun tedit ()
 		"shortcut to edit org/tktodos.org"
 		(interactive)
-		(find-file "/Users/thor/org/tktodos.org"))
+		(find-file "~/org/tktodos.org"))
 
 	(defun pedit ()
 		"shortcut to edit .profile"
 		(interactive)
-		(find-file "/Users/thor/.zshrc"))
+		(find-file "~/.zshrc"))
+
+ (defun insert-date (prefix)
+    "Insert the current date. With prefix-argument, use ISO format. With
+   two prefix arguments, write out the day and month name."
+    (interactive "P")
+    (let ((format (cond
+                   ((not prefix) "%Y-%m-%d")
+                   ((equal prefix '(4)) "%d-%m-%Y")
+                   ((equal prefix '(16)) "%A, %d. %B %Y")))
+          (system-time-locale "us_US"))
+      (insert (format-time-string format))))
+(global-set-key (kbd "C-c d") 'insert-date)
 #+end_src
 
 *** Better than C-h <blah>, get help for emacs-lisp thing at point in tooltip. C-h C-h.
@@ -434,7 +446,6 @@ Ivy views store the set of buffers open in the current frame.
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-c r") 'ivy-resume)
 ;(global-set-key (kbd "C-c b") 'counsel-bookmark) ; weird stuff goin on
-(global-set-key (kbd "C-c d") 'counsel-descbinds)
 (global-set-key (kbd "C-c o") 'counsel-outline)
 #+end_src
 
@@ -808,7 +819,7 @@ cargo install cargo-audit
 #+begin_src emacs-lisp
   (use-package rust-mode
     :config
-		(hrs/append-to-path "/Users/thor/.cargo/bin")
+		(hrs/append-to-path "~/.cargo/bin")
     (setq rust-format-on-save t))
 #+end_src
 

@@ -71,7 +71,12 @@
 	 (quote
 		("#CC9393" "#DFAF8F" "#F0DFAF" "#488249" "#95d291" "#57a2a4" "#93E0E3" "#DC8CC3" "#bbb0cb")))
  '(org-agenda-clockreport-parameter-plist (quote (:link t :maxlevel 2 :block today :scope agenda)))
- '(org-agenda-start-on-weekday nil t)
+ '(org-agenda-prefer-last-repeat nil)
+ '(org-agenda-show-all-dates nil)
+ '(org-agenda-show-future-repeats nil)
+ '(org-agenda-skip-deadline-if-done t)
+ '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-start-on-weekday nil)
  '(org-agenda-start-with-clockreport-mode t)
  '(org-agenda-window-frame-fractions (quote (0.5 . 0.5)))
  '(org-roam-directory "~/org/roam")
