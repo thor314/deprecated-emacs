@@ -11,24 +11,36 @@
 (sensible-defaults/backup-to-temp-directory)
 
 (defun reload ()
-	"shorcut to reload init file"
-	(interactive)
-	(load-file "/Users/thor/.emacs.d/init.el"))
+		"shorcut to reload init file"
+		(interactive)
+		(load-file "~/.emacs.d/init.el"))
 
-(defun cedit ()
-	"shortcut to edit config.org file"
-	(interactive)
-	(find-file "/Users/thor/.emacs.d/config.org"))
+	(defun cedit ()
+		"shortcut to edit config.org file"
+		(interactive)
+		(find-file "~/.emacs.d/config.org"))
 
-(defun tedit ()
-	"shortcut to edit org/tktodos.org"
-	(interactive)
-	(find-file "/Users/thor/org/tktodos.org"))
+	(defun tedit ()
+		"shortcut to edit org/tktodos.org"
+		(interactive)
+		(find-file "~/org/tktodos.org"))
 
-(defun pedit ()
-	"shortcut to edit .profile"
-	(interactive)
-	(find-file "/Users/thor/.zshrc"))
+	(defun pedit ()
+		"shortcut to edit .profile"
+		(interactive)
+		(find-file "~/.zshrc"))
+
+ (defun insert-date (prefix)
+    "Insert the current date. With prefix-argument, use ISO format. With
+   two prefix arguments, write out the day and month name."
+    (interactive "P")
+    (let ((format (cond
+                   ((not prefix) "%Y-%m-%d")
+                   ((equal prefix '(4)) "%d-%m-%Y")
+                   ((equal prefix '(16)) "%A, %d. %B %Y")))
+          (system-time-locale "us_US"))
+      (insert (format-time-string format))))
+(global-set-key (kbd "C-c d") 'insert-date)
 
 (defun describe-in-popup (fn)
   (let* ((thing (symbol-at-point))
@@ -106,6 +118,11 @@
 	(call-process-shell-command
 	 (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
 
+(use-package exec-path-from-shell)
+ (exec-path-from-shell-initialize)
+(when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
+  (exec-path-from-shell-initialize))
+
 (fset 'tk-org-insert-lisp-block
    "#+begin_src emacs-lisp\C-m\C-m#+end_src\C-p")
 (global-set-key (kbd "<f2>") 'tk-org-insert-lisp-block)
@@ -159,8 +176,8 @@
 (scroll-bar-mode 0)
 (set-window-scroll-bars (minibuffer-window) nil nil) ; minibuffer window has a scroll bar for some reason
 
-(use-package which-key)
-(which-key-mode)
+;(use-package which-key)
+;(which-key-mode)
 
 (global-prettify-symbols-mode t)
 (setq column-number-mode t)
@@ -219,7 +236,6 @@
 
 (global-set-key (kbd "C-c r") 'ivy-resume)
 ;(global-set-key (kbd "C-c b") 'counsel-bookmark) ; weird stuff goin on
-(global-set-key (kbd "C-c d") 'counsel-descbinds)
 (global-set-key (kbd "C-c o") 'counsel-outline)
 
 (use-package ivy-rich
@@ -376,11 +392,41 @@
   :ensure t
   :init (global-flycheck-mode)) ; test
 
+;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+;(setq lsp-keymap-prefix "s-l")
+
+;(use-package lsp-mode
+;    :init
+;    (add-hook 'prog-mode-hook 'lsp-mode))
+;    :config
+;    (use-package lsp-flycheck
+;        :ensure f ; comes with lsp-mode
+;        :after flycheck))
+;    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+;            (rust-mode . lsp)
+            ;; if you want which-key integration
+            ;(lsp-mode . lsp-enable-which-key-integration)
+;    :commands lsp)
+
+;; optionally
+;(use-package lsp-ui :commands lsp-ui-mode)
+;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+;;(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;(use-package rustic-mode)
+;(use-package lsp-rust
+;    :after lsp-mode)
+;(add-hook 'rust-mode-hook #'lsp)
+
 (use-package cargo)
 
 (use-package rust-mode
   :config
-	      (hrs/append-to-path "/Users/thor/.cargo/bin")
+	      (hrs/append-to-path "~/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package racer)

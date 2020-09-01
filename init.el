@@ -76,13 +76,13 @@
  '(org-agenda-show-future-repeats nil)
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
- '(org-agenda-start-on-weekday nil)
+ '(org-agenda-start-on-weekday nil t)
  '(org-agenda-start-with-clockreport-mode t)
  '(org-agenda-window-frame-fractions (quote (0.5 . 0.5)))
  '(org-roam-directory "~/org/roam")
  '(package-selected-packages
 	 (quote
-		(workgroups2 ob-go yasnippet-snippets company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
+		(rustic-mode lsp-ui lsp-ivy lsp-mode workgroups2 ob-go yasnippet-snippets company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
  '(setq "%<%Y%m%d%H%M%S>" t)
  '(user-mail-address "thork@tuta.io")
  '(wg-session-file "~/.emacs.d/workgroups"))

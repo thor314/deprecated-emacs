@@ -206,6 +206,19 @@ append to path, insert generated password, display a desktop notification
 		 (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
 #+end_src
 
+** exec-path-from-shell - magit relies on this
+[[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] is supposed to be good to have around when I see the text
+"no <> executable found", but I'm getting "function def is void:
+exec-path-from-shell" whenever I try using it. Therefore, =hrs/append-path= has
+gotten more use than this.
+ #+begin_src emacs-lisp
+ (use-package exec-path-from-shell)
+ (exec-path-from-shell-initialize)
+(when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
+  (exec-path-from-shell-initialize))
+ #+end_src
+
+
 ** Macro game going strong
 My lisp and rust block macros
 #+begin_src emacs-lisp
@@ -291,9 +304,10 @@ Get rid of the annoying parts of the display.
 #+end_src
 
 ** Which-key is f-ing great
+Testing to see if which key is crashing my setup on Cc|x Cg
 #+begin_src emacs-lisp
-(use-package which-key)
-(which-key-mode)
+;(use-package which-key)
+;(which-key-mode)
 #+end_src
 ** Use fancy lambdas, =moody= and =minions=
 lambdas: prettify symbols, column and line number
@@ -799,6 +813,44 @@ just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-in
   :init (global-flycheck-mode)) ; test
 #+end_src
 
+** LSP
+#+begin_src emacs-lisp
+;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+;(setq lsp-keymap-prefix "s-l")
+
+;(use-package lsp-mode
+;    :init
+;    (add-hook 'prog-mode-hook 'lsp-mode))
+;    :config
+;    (use-package lsp-flycheck
+;        :ensure f ; comes with lsp-mode
+;        :after flycheck))
+;    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+;            (rust-mode . lsp)
+            ;; if you want which-key integration
+            ;(lsp-mode . lsp-enable-which-key-integration)
+;    :commands lsp)
+
+;; optionally
+;(use-package lsp-ui :commands lsp-ui-mode)
+;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+;;(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+#+end_src
+
+#+RESULTS:
+
+
+*** Rust integration
+#+begin_src emacs-lisp
+;(use-package rustic-mode)
+;(use-package lsp-rust
+;    :after lsp-mode)
+;(add-hook 'rust-mode-hook #'lsp)
+#+end_src
 * Rust
 ** Setup cargo, rustmode, rustfmt, reminders
 *** Reminders and Warnings
@@ -1018,15 +1070,6 @@ The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.
 - what is #'<function>? add-hook 'blah-hook #'<function> = this is a function;
   which is why we use it when adding hooks.
 * Graveyard
-** exec-path-from-shell
-[[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] is supposed to be good to have around when I see the text
-"no <> executable found", but I'm getting "function def is void:
-exec-path-from-shell" whenever I try using it. Therefore, =hrs/append-path= has
-gotten more use than this.
-# #+begin_src emacs-lisp
-# (use-package exec-path-from-shell)
-# (exec-path-from-shell-initialize)
-# #+end_src
 
 *** =ivy-todo= -modify org-todos w ivy, Cc t, Cu Cc t - to change todos
 [[https://github.com/Kungsgeten/ivy-todo][ivy-todo]] is convenient for task setting, it recognizes what project I'm in and
