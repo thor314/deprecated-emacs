@@ -294,9 +294,9 @@ Return and indent instead of just return
 		 :demand ;; don't defer load, recommended
 	 :config
 		(setq centaur-tabs-style "bar"
-		 centaur-tabs-height 32 ; tab height
-		 centaur-tabs-set-icons t ; icons
-		 centaur-tabs-set-modified-marker t ;
+		 centaur-tabs-height 32
+		 centaur-tabs-set-icons t
+		 centaur-tabs-set-modified-marker t
 		 centaur-tabs-show-navigation-buttons t
 		 centaur-tabs-set-bar 'left)
 		(centaur-tabs-headline-match)
@@ -305,7 +305,7 @@ Return and indent instead of just return
 		(centaur-tabs-mode t)
 	(setq uniquify-separator "/")
 		(setq uniquify-buffer-name-style 'forward)
-		(defun centaur-tabs-buffer-groups ()
+		(defun centaur-tabs-buffer-groups () ;; straight from source
 			"`centaur-tabs-buffer-groups' control buffers' group rules.
 	Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
 	All buffer name start with * will group to \"Emacs\".
@@ -360,7 +360,7 @@ Return and indent instead of just return
 #+end_src
 
 #+RESULTS:
-: centaur-tabs-group-buffer-groups
+: t
 
 *** =subword-mode= to tell emacs to treat CamelCaseAsDifferentWords on M-f/b
 #+begin_src emacs-lisp
@@ -439,9 +439,12 @@ Toy with this for awhile, then try out [[https://github.com/d12frosted/flyspell-
 Want emacs to remember my window setup for stuff. Storing views in registers
 aren't persistent across sessions. [[https://github.com/pashinin/workgroups2][docs]].
 #+begin_src emacs-lisp
-	(use-package workgroups2)
-	(workgroups-mode 1)
-	(setq wg-prefix-key (kbd "C-c z")) ; set by default also
+		(use-package workgroups2
+			:config
+		((workgroups-mode 1)
+		(setq wg-session-file "~/.emacs.d/workgroups")
+		(setq wg-emacs-exit-save-behavior 'save)))      ; Options: 'save 'ask nil
+		;(setq wg-prefix-key (kbd "C-c z"))
 #+end_src
 
 ** TODO Aspell - spellchecker for emacs - presently donked up and completely unfunctional
@@ -891,14 +894,16 @@ Again courtesy of Sacha Chua
 (setq-default tab-width 2)
 #+end_src
 
-** yasnippet code snippets C-9
+** yasnippet code snippets Cc y
 [[https://github.com/joaotavora/yasnippet][yasnippet docs]], [[https://github.com/AndreaCrotti/yasnippet-snippets][snippets sold separately]]
 #+begin_src emacs-lisp
-	(use-package yasnippet)
-	(use-package yasnippet-snippets
-		:config 	(yas-reload-all) ; reload snippet tables
+	(use-package yasnippet-snippets)
+	(use-package yasnippet
+		:config
+		(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
 		:hook ('prog-mode #'yas-minor-mode)
-		:bind ("C-9" .  yas-insert-snippet))
+		:bind ("C-c y" .  yas-insert-snippet))
+(yas-reload-all) ; reload snippet tables
 #+end_src
 
 ** =flycheck= linter for most things. Mg n/p=nxt/prev err
