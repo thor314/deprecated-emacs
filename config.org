@@ -252,7 +252,7 @@ Return and indent instead of just return
 #+begin_src emacs-lisp
 	(use-package solarized-theme
 	 :config (load-theme 'solarized-gruvbox-dark t))
-	;; make src block code look nice
+	;; make src block code look like normal text
 	(add-hook 'text-mode-hook
 						 (lambda ()
 							(variable-pitch-mode 1)))
@@ -412,7 +412,8 @@ files. Projectile-commander is useful magit-like.
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 #+end_src
 ** =magit= - git version control inside emacs. C-x g
-[[https://github.com/magit/magit][magit]]. Interface to git.
+[[https://github.com/magit/magit][magit]]. Interface to git. [[https://magit.vc/manual/forge/][Forge]] to interface with github. Awful documentation on
+forge. Ugh.
 #+begin_src emacs-lisp
   (use-package magit)
 #+end_src

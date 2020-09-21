@@ -136,7 +136,7 @@
 
 (use-package solarized-theme
  :config (load-theme 'solarized-gruvbox-dark t))
-;; make src block code look nice
+;; make src block code look like normal text
 (add-hook 'text-mode-hook
 					 (lambda ()
 						(variable-pitch-mode 1)))
@@ -232,6 +232,9 @@
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
 (use-package magit)
+(use-package forge
+  :after magit)
+(setq auth-sources '("~/.authinfo")) ; personal acess token stored here
 
 (use-package rg)
 (hrs/append-to-path "/usr/local/bin") ; oddly wasn't globally in path, fixing that
