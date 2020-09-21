@@ -141,35 +141,30 @@
 					 (lambda ()
 						(variable-pitch-mode 1)))
 
-(defun set-frame-size-according-to-resolution ()
-  (interactive)
-  (if window-system
-  (progn
-    ;; use 120 char wide window for largeish displays
-    ;; and smaller 80 column windows for smaller displays
-    ;; pick whatever numbers make sense for you
-    (if (> (x-display-pixel-width) 1280)
-           (add-to-list 'default-frame-alist (cons 'width 100))
-           (add-to-list 'default-frame-alist (cons 'width 80)))
-    ;; for the height, subtract a couple hundred pixels
-    ;; from the screen height (for panels, menubars and
-    ;; whatnot), then divide by the height of a char to
-    ;; get the height we want
-    (add-to-list 'default-frame-alist
-         (cons 'height (/ (- (x-display-pixel-height) 60) ; close as I can get to full left half
-                             (frame-char-height)))))))
+(use-package zoom
+	:config (zoom-mode t))
 
-(set-frame-size-according-to-resolution)
+(use-package centaur-tabs
+  :demand ;; don't defer load, recommended
+  :config
+  (centaur-tabs-mode t)
+  :bind
+  (("C-M-'" . centaur-tabs-backward)
+   ("C-M-," . centaur-tabs-forward)))
+(setq centaur-tabs-set-icons t)
+(setq centaur-tabs-set-bar 'left) ; display a colored bar on selected tab
+(setq centaur-tabs-set-close-button nil)
+(setq centaur-tabs-set-modified-marker t)
 
 (setq subword-mode t)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
-(global-linum-mode 1)
-(global-hl-line-mode)
-(setq electric-pair-mode 1)
-(use-package diff-hl
+      (global-linum-mode 1)
+      (global-hl-line-mode)
+      (setq electric-pair-mode 1)
+      (use-package diff-hl
 :config
-(global-diff-hl-mode))
+      (global-diff-hl-mode))
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -206,11 +201,8 @@
 (setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
 
 (use-package workgroups2)
-	(workgroups-mode 1)
-	(setq wg-prefix-key (kbd "C-c z")) ; set by default also
-;	(setq wg-session-file "~/.emacs.d/workgroups")
-	;; hooks: workgroups-(exit-)?mode-hook
-	;; wg-(before|after)-switch-to-workgroup-hook
+(workgroups-mode 1)
+(setq wg-prefix-key (kbd "C-c z")) ; set by default also
 
 (use-package ivy)
 (use-package swiper) ; search extension to ivy
@@ -432,7 +424,7 @@
 
 (use-package rust-mode
   :config
-	(hrs/append-to-path "~/.cargo/bin")
+	      (hrs/append-to-path "~/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package racer
