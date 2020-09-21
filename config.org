@@ -243,13 +243,12 @@ Return and indent instead of just return
 #+end_src
 
 * Prettify emacs window appearance and general settings
-** Please don't create annoying .#<backup> files
+** No Backups~
 #+begin_src emacs-lisp
 	(setq make-backup-files nil) ; none of these~
 	(setq auto-save-default t)
 #+end_src
-** Appearance
-*** Theme
+** Theme
 #+begin_src emacs-lisp
 	(use-package solarized-theme
 	 :config (load-theme 'solarized-gruvbox-dark t))
@@ -258,110 +257,13 @@ Return and indent instead of just return
 						 (lambda ()
 							(variable-pitch-mode 1)))
 #+end_src
-*** Window size
-+begin_src emacs-lisp
-(defun set-frame-size-according-to-resolution ()
-  (interactive)
-  (if window-system
-  (progn
-    ;; use 120 char wide window for largeish displays
-    ;; and smaller 80 column windows for smaller displays
-    ;; pick whatever numbers make sense for you
-    (if (> (x-display-pixel-width) 1280)
-           (add-to-list 'default-frame-alist (cons 'width 100))
-           (add-to-list 'default-frame-alist (cons 'width 80)))
-    ;; for the height, subtract a couple hundred pixels
-    ;; from the screen height (for panels, menubars and
-    ;; whatnot), then divide by the height of a char to
-    ;; get the height we want
-    (add-to-list 'default-frame-alist
-         (cons 'height (/ (- (x-display-pixel-height) 60) ; close as I can get to full left half
-                             (frame-char-height)))))))
-
-(set-frame-size-according-to-resolution)
-+end_src
-
+** Window configuration
 *** Zoom mode
 [[https://github.com/cyrus-and/zoom][Zoom]]. Auto resize windows on active buffer switch.
 #+begin_src emacs-lisp
 	(use-package zoom
 		:config (zoom-mode t))
 #+end_src
-*** (Centaur) Tabs - move around with CM-[',]
-[[https://github.com/ema2159/centaur-tabs][Tabbing]].
-#+begin_src emacs-lisp
-	 (use-package centaur-tabs
-		 :demand ;; don't defer load, recommended
-	 :config
-		(setq centaur-tabs-style "bar"
-		 centaur-tabs-height 32
-		 centaur-tabs-set-icons t
-		 centaur-tabs-set-modified-marker t
-		 centaur-tabs-show-navigation-buttons t
-		 centaur-tabs-set-bar 'left)
-		(centaur-tabs-headline-match)
-		;; (centaur-tabs-enable-buffer-reordering)
-		;; (setq centaur-tabs-adjust-buffer-order t)
-		(centaur-tabs-mode t)
-	(setq uniquify-separator "/")
-		(setq uniquify-buffer-name-style 'forward)
-		(defun centaur-tabs-buffer-groups () ;; straight from source
-			"`centaur-tabs-buffer-groups' control buffers' group rules.
-	Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
-	All buffer name start with * will group to \"Emacs\".
-	Other buffer group by `centaur-tabs-get-group-name' with project name."
-			(list
-			 (cond
-	 ;; ((not (eq (file-remote-p (buffer-file-name)) nil))
-	 ;; "Remote")
-	 ((or (string-equal "*" (substring (buffer-name) 0 1))
-				(memq major-mode '(magit-process-mode
-				 magit-status-mode
-				 magit-diff-mode
-				 magit-log-mode
-				 magit-file-mode
-				 magit-blob-mode
-				 magit-blame-mode
-				 )))
-		"Emacs")
-	 ((derived-mode-p 'prog-mode)
-		"Editing")
-	 ((derived-mode-p 'dired-mode)
-		"Dired")
-	 ((memq major-mode '(helpful-mode
-					 help-mode))
-		"Help")
-	 ((memq major-mode '(org-mode
-					 org-agenda-clockreport-mode
-					 org-src-mode
-					 org-agenda-mode
-					 org-beamer-mode
-					 org-indent-mode
-					 org-bullets-mode
-					 org-cdlatex-mode
-					 org-agenda-log-mode
-					 diary-mode))
-		"OrgMode")
-	 (t
-		(centaur-tabs-get-group-name (current-buffer))))))
-		:hook
-		(dashboard-mode . centaur-tabs-local-mode)
-		(term-mode . centaur-tabs-local-mode)
-		(calendar-mode . centaur-tabs-local-mode)
-		(org-agenda-mode . centaur-tabs-local-mode)
-		(helpful-mode . centaur-tabs-local-mode)
-		 :bind
-		 (("C-M-'" . centaur-tabs-backward)
-			("C-M-," . centaur-tabs-forward)
-		("C-c t s" . centaur-tabs-counsel-switch-group)
-		("C-c t p" . centaur-tabs-group-by-projectile-project)
-		("C-c t g" . centaur-tabs-group-buffer-groups)
-		))
-#+end_src
-
-#+RESULTS:
-: t
-
 *** =subword-mode= to tell emacs to treat CamelCaseAsDifferentWords on M-f/b
 #+begin_src emacs-lisp
 	(setq subword-mode t)
@@ -388,12 +290,6 @@ Get rid of the annoying parts of the display.
   (set-window-scroll-bars (minibuffer-window) nil nil) ; minibuffer window has a scroll bar for some reason
 #+end_src
 
-** Which-key is f-ing great
-Testing to see if which key is crashing my setup on Cc|x Cg
-#+begin_src emacs-lisp
-;(use-package which-key)
-;(which-key-mode)
-#+end_src
 ** Use fancy lambdas, =moody= and =minions=
 lambdas: prettify symbols, column and line number
 #+begin_src emacs-lisp
@@ -439,76 +335,17 @@ Toy with this for awhile, then try out [[https://github.com/d12frosted/flyspell-
 Want emacs to remember my window setup for stuff. Storing views in registers
 aren't persistent across sessions. [[https://github.com/pashinin/workgroups2][docs]].
 #+begin_src emacs-lisp
-		(use-package workgroups2
-			:config
-		((workgroups-mode 1)
-		(setq wg-session-file "~/.emacs.d/workgroups")
-		(setq wg-emacs-exit-save-behavior 'save)))      ; Options: 'save 'ask nil
-		;(setq wg-prefix-key (kbd "C-c z"))
+	(use-package workgroups2
+		:config
+	(setq wg-session-file "~/.emacs.d/workgroups")
+	(setq wg-emacs-exit-save-behavior 'save))      ; Options: 'save 'ask nil
+	(setq wg-prefix-key (kbd "C-c z"))
+	(workgroups-mode)
 #+end_src
-
-** TODO Aspell - spellchecker for emacs - presently donked up and completely unfunctional
-[[http://blog.binchen.org/posts/what-s-the-best-spell-check-set-up-in-emacs.html][Aspell source code from Chen Bin]],
-Usage: M-x ispell-word
-*** flyspell-detect-ispell-args
-: #+begin_src emacs-lisp
-;; if (aspell installed) { use aspell}
-;; else if (hunspell installed) { use hunspell }
-;; whatever spell checker I use, I always use English dictionary
-;; I prefer use aspell because:
-;; 1. aspell is older
-;; 2. looks Kevin Atkinson still get some road map for aspell:
-;; @see http://lists.gnu.org/archive/html/aspell-announce/2011-09/msg00000.html
-(defun flyspell-detect-ispell-args (&optional run-together)
-  "if RUN-TOGETHER is true, spell check the CamelCase words."
-  (let (args)
-    (cond
-     ((string-match  "aspell$" ispell-program-name)
-      ;; Force the English dictionary for aspell
-      ;; Support Camel Case spelling check (tested with aspell 0.6)
-      (setq args (list "--sug-mode=ultra" "--lang=en_US"))
-      (when run-together
-        (cond
-         ;; Kevin Atkinson said now aspell supports camel case directly
-         ;; https://github.com/redguardtoo/emacs.d/issues/796
-         ((string-match-p "--camel-case"
-                          (shell-command-to-string (concat ispell-program-name " --help")))
-          (setq args (append args '("--camel-case"))))
-
-         ;; old aspell uses "--run-together". Please note we are not dependent on this option
-         ;; to check camel case word. wucuo is the final solution. This aspell options is just
-         ;; some extra check to speed up the whole process.
-         (t
-          (setq args (append args '("--run-together" "--run-together-limit=16")))))))
-     ((string-match "hunspell$" ispell-program-name)
-      ;; Force the English dictionary for hunspell
-      (setq args "-d en_US")))
-    args))
-#+end_src
-
-*** if aspell can be found, use it, or else use hunspell
-: #+begin_src emacs-lisp
-(cond
- ((executable-find "aspell")
-  ;; you may also need `ispell-extra-args'
-  (setq ispell-program-name "aspell"))
- ((executable-find "hunspell")
-  (setq ispell-program-name "hunspell")
-
-  ;; Please note that `ispell-local-dictionary` itself will be passed to hunspell cli with "-d"
-  ;; it's also used as the key to lookup ispell-local-dictionary-alist
-  ;; if we use different dictionary
-  (setq ispell-local-dictionary "en_US")
-  (setq ispell-local-dictionary-alist
-        '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))))
- (t (setq ispell-program-name nil)))
-#+end_src
-
 * Cool Tools
 ** =ivy-mode=, with =counsel= and =swiper= - navigation and other things
 Ivy and helm do similar stuff, move ya from place to place and complete stuff.
-Ivy claims to be more minimalistic, idgaf tbh.
-
+Ivy claims to be more minimal.
 Using [[https://oremacs.com/swiper/][oremacs]] user manual heavily.
 [[https://writequit.org/denver-emacs/presentations/2017-04-11-ivy.html][this link's much nicer tho]]
 New learn: use C-c v/V to store the current set of windows open.
@@ -575,7 +412,7 @@ files. Projectile-commander is useful magit-like.
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 #+end_src
 ** =magit= - git version control inside emacs. C-x g
-Better interface to git than other stuff.
+[[https://github.com/magit/magit][magit]]. Interface to git.
 #+begin_src emacs-lisp
   (use-package magit)
 #+end_src
@@ -600,7 +437,6 @@ rarely use it
 ** =dumb-jump= - jump to definition with CMs and CMr
 dumb-jump-go has two functions: go and back.
 The defaults of CM-g and CM-p weren't workin for me so I changed em.
-
 #+begin_src emacs-lisp
 (use-package dumb-jump)
 (global-set-key (kbd "C-M-s") 'dumb-jump-go)
@@ -608,7 +444,6 @@ The defaults of CM-g and CM-p weren't workin for me so I changed em.
 (setq dumb-jump-force-searcher 'rg)
 (setq dumb-jump-selector 'ivy)
 #+end_src
-
 ** =re-builder= - for building and testing regex (try C-c C-w)
 Set re-builder to "string mode" (default req.s double backslash)
 #+begin_src emacs-lisp
@@ -616,12 +451,6 @@ Set re-builder to "string mode" (default req.s double backslash)
 (setq reb-re-syntax 'string)
 #+end_src
 
-** =notmuch= email client
-[[https://notmuchmail.org/notmuch-emacs/][notmuch emacs docs]] reminder to download and install notmuch first
-#+begin_src emacs-lisp
-(use-package notmuch)
-(autoload 'notmuch "notmuch" "notmuch mail" t) ;
-#+end_src
 ** =simpleclip= - Use cmd-C, cmd-v, cmd x
 For copy-cut-paste things without affecting kill ring.
 #+begin_src emacs-lisp
@@ -630,18 +459,13 @@ For copy-cut-paste things without affecting kill ring.
 #+end_src
 
 * Fun =D
+** Emojify
 [[https://github.com/iqbalansari/emacs-emojify][emojify.]]
-#+begin_src emacs-lisp
+;#+begin_src emacs-lisp
 (use-package emojify
   :hook (after-init . global-emojify-mode))
 #+end_src
 
-** XKCD
-get [[https://github.com/vibhavp/emacs-xkcd][xkcd]].
-#+begin_src emacs-lisp
-	(use-package xkcd)
-	(global-set-key (kbd "<f4>") 'xkcd)
-#+end_src
 * Orgifications
 [[http://cachestocaches.com/2016/9/my-workflow-org-agenda/][This]] was a pretty good start.
 Try clocking in and out with *Cc Cx Ci/o*
@@ -894,18 +718,6 @@ Again courtesy of Sacha Chua
 (setq-default tab-width 2)
 #+end_src
 
-** yasnippet code snippets Cc y
-[[https://github.com/joaotavora/yasnippet][yasnippet docs]], [[https://github.com/AndreaCrotti/yasnippet-snippets][snippets sold separately]]
-#+begin_src emacs-lisp
-	(use-package yasnippet-snippets)
-	(use-package yasnippet
-		:config
-		(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-		:hook ('prog-mode #'yas-minor-mode)
-		:bind ("C-c y" .  yas-insert-snippet))
-(yas-reload-all) ; reload snippet tables
-#+end_src
-
 ** =flycheck= linter for most things. Mg n/p=nxt/prev err
 new: want flycheck keys
 just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-interaction.html][is something already done for me]].
@@ -915,44 +727,6 @@ just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-in
   :init (global-flycheck-mode)) ; test
 #+end_src
 
-** LSP
-#+begin_src emacs-lisp
-;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-;(setq lsp-keymap-prefix "s-l")
-
-;(use-package lsp-mode
-;    :init
-;    (add-hook 'prog-mode-hook 'lsp-mode))
-;    :config
-;    (use-package lsp-flycheck
-;        :ensure f ; comes with lsp-mode
-;        :after flycheck))
-;    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-;            (rust-mode . lsp)
-            ;; if you want which-key integration
-            ;(lsp-mode . lsp-enable-which-key-integration)
-;    :commands lsp)
-
-;; optionally
-;(use-package lsp-ui :commands lsp-ui-mode)
-;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-;; optionally if you want to use debugger
-;;(use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-#+end_src
-
-#+RESULTS:
-
-
-*** Rust integration
-#+begin_src emacs-lisp
-;(use-package rustic-mode)
-;(use-package lsp-rust
-;    :after lsp-mode)
-;(add-hook 'rust-mode-hook #'lsp)
-#+end_src
 * Rust
 ** Setup cargo, rustmode, rustfmt, reminders
 *** Reminders and Warnings
@@ -1173,23 +947,108 @@ The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.
 - what is #'<function>? add-hook 'blah-hook #'<function> = this is a function;
   which is why we use it when adding hooks.
 * Graveyard
+** yasnippet code snippets - often fails to load properly
+[[https://github.com/joaotavora/yasnippet][yasnippet docs]], [[https://github.com/AndreaCrotti/yasnippet-snippets][snippets sold separately]]
+: #+begin_src emacs-lisp
+	(use-package yasnippet-snippets)
+	(use-package yasnippet
+		:config  (yas-reload-all) ; must come after snippet-dirs
+		:hook ('prog-mode #'yas-minor-mode)
+		:bind ("C-c y" .  yas-insert-snippet))
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets"                 ;; personal snippets
+        ))
+: #+end_src
 
-*** =ivy-todo= -modify org-todos w ivy, Cc t, Cu Cc t - to change todos
+** Window size - weird interaction with maximizing window
+
+(defun set-frame-size-according-to-resolution ()
+  (interactive)
+  (if window-system
+  (progn
+    ;; use 120 char wide window for largeish displays
+    ;; and smaller 80 column windows for smaller displays
+    ;; pick whatever numbers make sense for you
+    (if (> (x-display-pixel-width) 1280)
+           (add-to-list 'default-frame-alist (cons 'width 100))
+           (add-to-list 'default-frame-alist (cons 'width 80)))
+    ;; for the height, subtract a couple hundred pixels
+    ;; from the screen height (for panels, menubars and
+    ;; whatnot), then divide by the height of a char to
+    ;; get the height we want
+    (add-to-list 'default-frame-alist
+         (cons 'height (/ (- (x-display-pixel-height) 60) ; close as I can get to full left half
+                             (frame-char-height)))))))
+
+(set-frame-size-according-to-resolution)
+** Centaur Tabs - crashes emacs on reload
+	 (use-package centaur-tabs
+		 :demand ;; don't defer load, recommended
+	 :config
+		(setq centaur-tabs-style "bar"
+		 centaur-tabs-height 32
+		 centaur-tabs-set-icons t
+		 centaur-tabs-set-modified-marker t
+		 centaur-tabs-show-navigation-buttons t
+		 centaur-tabs-set-bar 'left)
+		(centaur-tabs-headline-match)
+		;; (centaur-tabs-enable-buffer-reordering)
+		;; (setq centaur-tabs-adjust-buffer-order t)
+		(centaur-tabs-mode t)
+	(setq uniquify-separator "/")
+		(setq uniquify-buffer-name-style 'forward))
+** XKCD - crashes emacs on reload
+get [[https://github.com/vibhavp/emacs-xkcd][xkcd]]. Turns out this makes it impossible to reload for unknown reasons.
+	(use-package xkcd)
+	(global-set-key (kbd "<f4>") 'xkcd)
+** Which-key - sometimes crashes emacs on Cx Cg
+was crashing my config on Cx Cg
+Testing to see if which key is crashing my setup on Cc|x Cg
+(use-package which-key)
+(which-key-mode)
+** LSP- too much fiddling, use eglot instead
+;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+;(setq lsp-keymap-prefix "s-l")
+
+;(use-package lsp-mode
+;    :init
+;    (add-hook 'prog-mode-hook 'lsp-mode))
+;    :config
+;    (use-package lsp-flycheck
+;        :ensure f ; comes with lsp-mode
+;        :after flycheck))
+;    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+;            (rust-mode . lsp)
+            ;; if you want which-key integration
+            ;(lsp-mode . lsp-enable-which-key-integration)
+;    :commands lsp)
+
+;; optionally
+;(use-package lsp-ui :commands lsp-ui-mode)
+;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+;;(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+** =notmuch= email client - too much fiddling
+[[https://notmuchmail.org/notmuch-emacs/][notmuch emacs docs]] reminder to download and install notmuch first
+(use-package notmuch)
+(autoload 'notmuch "notmuch" "notmuch mail" t) ;
+** =ivy-todo= - use org-agenda instead
+modify org-todos w ivy, Cc t, Cu Cc t - to change todos
 [[https://github.com/Kungsgeten/ivy-todo][ivy-todo]] is convenient for task setting, it recognizes what project I'm in and
 puts me in that list. Sortof a lightweight task manager. Testing this out.
 Decided ivy-todo was inferior to org-agenda
-: +begin_src emacs-lisp
 (use-package ivy-todo :ensure t
   :bind ("C-c t" . ivy-todo)
   :commands ivy-todo
   :config
 	(setq ivy-todo-file "~/org/ivy-todo.org")
   (setq ivy-todo-default-tags '("PROJECT")))
-*** =dead-grep= Tried deadgrep. prefer counsel-rg.
-*** =Ido mode=  Turning off ido mode for ivy mode
+** =Ido mode=  - use ivy instead
 Note: type C-f while in an Ido frame to turn off Ido's suggestions.
 I could extend Ido further to search through "work directories" and other stuff
-;#+begin_src emacs-lisp
 	(ido-mode 1)
 	(setq ido-enable-flex-matching t)
 	(setq ido-everywhere t) ; enables ido on C-x C-f
