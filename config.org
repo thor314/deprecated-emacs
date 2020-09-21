@@ -9,12 +9,13 @@ It means install package if not already installed.
   (setq use-package-always-ensure t)
 #+end_src
 
-Always compile packages, and use the newest version available.
+[[https://github.com/emacscollective/auto-compile][Auto-compile]] packages, and use the newest version available.
 #+begin_src emacs-lisp
-  (use-package auto-compile
-    :config (auto-compile-on-load-mode))
-  (setq load-prefer-newer t)
+	(use-package auto-compile
+		:config	(auto-compile-on-save-mode) ;; reduce risk of loading outdated bytecode
+		(setq load-prefer-newer t))
 #+end_src
+
 ** =Use-package= instructions (because I forget them)
 We got some keywords and some usage patterns.
 :init - execute stuff before loading. =:init (setq my-var t)=
@@ -23,7 +24,7 @@ We got some keywords and some usage patterns.
 :bind-keymap - eg projectile, set a command-map prefix.
 =:bind-keymap ("C-c p" . projectile-command-map))=
 :mode, interpreter - when extension is blah, use mode, and interpreter blah.
-=("\\.py\\'" . python-mode)=
+"\\.py\\'" . python-mode)=
 =:interpreter ("python" . python-mode)=
 :magic, magic-fallback - like mode, matches code against a regex.
 =:magic ("%PDF" . pdf-view-mode)=
@@ -212,12 +213,11 @@ append to path, insert generated password, display a desktop notification
 exec-path-from-shell" whenever I try using it. Therefore, =hrs/append-path= has
 gotten more use than this.
  #+begin_src emacs-lisp
- (use-package exec-path-from-shell)
- (exec-path-from-shell-initialize)
-(when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
-  (exec-path-from-shell-initialize))
+ (use-package exec-path-from-shell
+ :init (exec-path-from-shell-initialize)
+ :config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
+ (exec-path-from-shell-initialize)))
  #+end_src
-
 
 ** Macro game going strong
 My lisp and rust block macros
@@ -232,6 +232,7 @@ My lisp and rust block macros
    "#+begin_src rust\C-m\C-m#+end_src\C-p")
 (global-set-key (kbd "<f3>") 'tk-org-insert-rust-block)
 #+end_src
+#+begin_src emacs-lisp
 
 ** Handy kbd shortcuts live here
 Return and indent instead of just return
@@ -244,16 +245,19 @@ Return and indent instead of just return
 * Prettify emacs window appearance and general settings
 ** Please don't create annoying .#<backup> files
 #+begin_src emacs-lisp
-(setq make-backup-files nil) ; none of these~
-(setq auto-save-default nil) ; none of these#
+	(setq make-backup-files nil) ; none of these~
+	(setq auto-save-default t)
 #+end_src
 ** Appearance
 *** Theme
 #+begin_src emacs-lisp
-(use-package solarized-theme)
-(load-theme 'solarized-gruvbox-dark t)
+	(use-package solarized-theme
+	 :config (load-theme 'solarized-gruvbox-dark t))
+	;; make src block code look nice
+	(add-hook 'text-mode-hook
+						 (lambda ()
+							(variable-pitch-mode 1)))
 #+end_src
-
 *** Window size
 #+begin_src emacs-lisp
 (defun set-frame-size-according-to-resolution ()
@@ -342,10 +346,10 @@ minions mode changes what minor are listed in the bar
 #+begin_src emacs-lisp
 	(dolist (hook '(text-mode-hook)) ; when entering text mode
 				(add-hook hook (lambda () (flyspell-mode 1)))) ; add hook to turn on flyspell
-	(add-hook 'prog-mode-hook ; turn on flyspell in comments of programming modes
-						(lambda ()
-							(flyspell-prog-mode)
-						))
+	;(add-hook 'prog-mode-hook ; turn on flyspell in comments of programming modes
+	;					(lambda ()
+	;						(flyspell-prog-mode)
+	;					))
 	(setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
 #+end_src
 Toy with this for awhile, then try out [[https://github.com/d12frosted/flyspell-correct][flyspell-correct]] and [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-ivy-interface][ivy interface]] later
@@ -357,9 +361,6 @@ aren't persistent across sessions. [[https://github.com/pashinin/workgroups2][do
 	(use-package workgroups2)
 	(workgroups-mode 1)
 	(setq wg-prefix-key (kbd "C-c z")) ; set by default also
-;	(setq wg-session-file "~/.emacs.d/workgroups")
-	;; hooks: workgroups-(exit-)?mode-hook
-	;; wg-(before|after)-switch-to-workgroup-hook
 #+end_src
 
 ** TODO Aspell - spellchecker for emacs - presently donked up and completely unfunctional
@@ -544,6 +545,19 @@ For copy-cut-paste things without affecting kill ring.
 (simpleclip-mode 1)
 #+end_src
 
+* Fun =D
+[[https://github.com/iqbalansari/emacs-emojify][emojify.]]
+#+begin_src emacs-lisp
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
+#+end_src
+
+** XKCD
+get [[https://github.com/vibhavp/emacs-xkcd][xkcd]].
+#+begin_src emacs-lisp
+	(use-package xkcd)
+	(global-set-key (kbd "<f4>") 'xkcd)
+#+end_src
 * Orgifications
 [[http://cachestocaches.com/2016/9/my-workflow-org-agenda/][This]] was a pretty good start.
 Try clocking in and out with *Cc Cx Ci/o*
@@ -561,8 +575,9 @@ don't indent newly expanded blocks.
 	(setq org-src-fontify-natively t)
 	(setq org-src-tab-acts-natively t)
 	(setq org-adapt-indentation nil)
-	(setq org-pretty-entities t) ; quick latex-ify in org files
+	;(setq org-pretty-entities nil) ; quick latex-ify in org files; annoying in codesnippets
 #+end_src
+
 *** Store org files in ~/org. Set todo state keywords.
 #+begin_src emacs-lisp
 	(setq org-directory "~/org")
@@ -798,12 +813,13 @@ Again courtesy of Sacha Chua
 ** yasnippet code snippets C-9
 [[https://github.com/joaotavora/yasnippet][yasnippet docs]], [[https://github.com/AndreaCrotti/yasnippet-snippets][snippets sold separately]]
 #+begin_src emacs-lisp
-(use-package yasnippet)
-(use-package yasnippet-snippets)
-(yas-reload-all) ; reload snippet tables
-(add-hook 'prog-mode-hook #'yas-minor-mode)
-(global-set-key (kbd "C-9") 'yas-insert-snippet)
+	(use-package yasnippet)
+	(use-package yasnippet-snippets
+		:config 	(yas-reload-all) ; reload snippet tables
+		:hook ('prog-mode #'yas-minor-mode)
+		:bind ("C-9" .  yas-insert-snippet))
 #+end_src
+
 ** =flycheck= linter for most things. Mg n/p=nxt/prev err
 new: want flycheck keys
 just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-interaction.html][is something already done for me]].
@@ -881,13 +897,15 @@ Have to install with cargo before use: `cargo +nightly install racer`
 May have to run `rustup toolchain add nightly` as well.
 Use tab for autocomplete without waiting.
 #+begin_src emacs-lisp
-(use-package racer)
-(add-hook 'rust-mode-hook #'racer-mode)
-(add-hook 'racer-mode-hook #'eldoc-mode) ; shows in echo area the arg list of the fn at point
-(add-hook 'racer-mode-hook #'company-mode) ; company autocomplete sometimes slows editor down significantly
-(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-(setq company-tooltip-align-annotations t)
+		(use-package racer
+		:config (setq company-tooltip-align-annotations t)
+		:hook ((rust-mode . racer-mode)
+		(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
+		(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
+		:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
+	;	(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
 #+end_src
+
 ** =rust-playground= get a rust playground for snippets.
 Usage: M-x rust-playground(-exec|rm)?
 Note ctl-ret is bound in playgrounds for compile

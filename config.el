@@ -2,8 +2,8 @@
 (setq use-package-always-ensure t)
 
 (use-package auto-compile
-  :config (auto-compile-on-load-mode))
-(setq load-prefer-newer t)
+	:config	(auto-compile-on-save-mode) ;; reduce risk of loading outdated bytecode
+	(setq load-prefer-newer t))
 
 (load-file "~/.emacs.d/sensible-defaults.el")
 (sensible-defaults/use-all-settings)
@@ -118,10 +118,10 @@
 	(call-process-shell-command
 	 (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
 
-(use-package exec-path-from-shell)
- (exec-path-from-shell-initialize)
-(when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
-  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+:init (exec-path-from-shell-initialize)
+:config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
+(exec-path-from-shell-initialize)))
 
 (fset 'tk-org-insert-lisp-block
    "#+begin_src emacs-lisp\C-m\C-m#+end_src\C-p")
@@ -131,15 +131,15 @@
    "#+begin_src rust\C-m\C-m#+end_src\C-p")
 (global-set-key (kbd "<f3>") 'tk-org-insert-rust-block)
 
-(define-key global-map (kbd "RET") 'newline-and-indent)
-(define-key global-map (kbd "<f10>") 'eshell-command)
-(define-key global-map (kbd "<f9>") 'eshell)
-
 (setq make-backup-files nil) ; none of these~
-(setq auto-save-default nil) ; none of these#
+(setq auto-save-default t)
 
-(use-package solarized-theme)
-(load-theme 'solarized-gruvbox-dark t)
+(use-package solarized-theme
+ :config (load-theme 'solarized-gruvbox-dark t))
+;; make src block code look nice
+(add-hook 'text-mode-hook
+					 (lambda ()
+						(variable-pitch-mode 1)))
 
 (defun set-frame-size-according-to-resolution ()
   (interactive)
@@ -164,12 +164,12 @@
 (setq subword-mode t)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
-      (global-linum-mode 1)
-      (global-hl-line-mode)
-      (setq electric-pair-mode 1)
-      (use-package diff-hl
+(global-linum-mode 1)
+(global-hl-line-mode)
+(setq electric-pair-mode 1)
+(use-package diff-hl
 :config
-      (global-diff-hl-mode))
+(global-diff-hl-mode))
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -199,10 +199,10 @@
 
 (dolist (hook '(text-mode-hook)) ; when entering text mode
 			(add-hook hook (lambda () (flyspell-mode 1)))) ; add hook to turn on flyspell
-(add-hook 'prog-mode-hook ; turn on flyspell in comments of programming modes
-					(lambda ()
-						(flyspell-prog-mode)
-					))
+;(add-hook 'prog-mode-hook ; turn on flyspell in comments of programming modes
+;					(lambda ()
+;						(flyspell-prog-mode)
+;					))
 (setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
 
 (use-package workgroups2)
@@ -275,6 +275,12 @@
 (use-package simpleclip)
 (simpleclip-mode 1)
 
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
+
+(use-package xkcd)
+(global-set-key (kbd "<f4>") 'xkcd)
+
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
@@ -282,7 +288,7 @@
 (setq org-src-fontify-natively t)
 (setq org-src-tab-acts-natively t)
 (setq org-adapt-indentation nil)
-(setq org-pretty-entities t) ; quick latex-ify in org files
+;(setq org-pretty-entities nil) ; quick latex-ify in org files; annoying in codesnippets
 
 (setq org-directory "~/org")
 	(setq org-todo-keywords									; ! = timestamp, @ = create note
@@ -383,10 +389,10 @@
 (setq-default tab-width 2)
 
 (use-package yasnippet)
-(use-package yasnippet-snippets)
-(yas-reload-all) ; reload snippet tables
-(add-hook 'prog-mode-hook #'yas-minor-mode)
-(global-set-key (kbd "C-9") 'yas-insert-snippet)
+(use-package yasnippet-snippets
+	:config 	(yas-reload-all) ; reload snippet tables
+	:hook ('prog-mode #'yas-minor-mode)
+	:bind ("C-9" .  yas-insert-snippet))
 
 (use-package flycheck
   :ensure t
@@ -426,15 +432,16 @@
 
 (use-package rust-mode
   :config
-	      (hrs/append-to-path "~/.cargo/bin")
+	(hrs/append-to-path "~/.cargo/bin")
   (setq rust-format-on-save t))
 
-(use-package racer)
-(add-hook 'rust-mode-hook #'racer-mode)
-(add-hook 'racer-mode-hook #'eldoc-mode) ; shows in echo area the arg list of the fn at point
-(add-hook 'racer-mode-hook #'company-mode) ; company autocomplete sometimes slows editor down significantly
-(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-(setq company-tooltip-align-annotations t)
+(use-package racer
+	:config (setq company-tooltip-align-annotations t)
+	:hook ((rust-mode . racer-mode)
+	(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
+	(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
+	:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
+;	(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
 
 (use-package rust-playground)
 
