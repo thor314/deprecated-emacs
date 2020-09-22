@@ -147,12 +147,12 @@
 (setq subword-mode t)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
-(global-linum-mode 1)
-(global-hl-line-mode)
-(setq electric-pair-mode 1)
-(use-package diff-hl
+      (global-linum-mode 1)
+      (global-hl-line-mode)
+      (setq electric-pair-mode 1)
+      (use-package diff-hl
 :config
-(global-diff-hl-mode))
+      (global-diff-hl-mode))
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -232,9 +232,7 @@
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
 (use-package magit)
-(use-package forge
-  :after magit)
-(setq auth-sources '("~/.authinfo")) ; personal acess token stored here
+(use-package forge)
 
 (use-package rg)
 (hrs/append-to-path "/usr/local/bin") ; oddly wasn't globally in path, fixing that
@@ -302,13 +300,13 @@
 (setq org-agenda-files '("~/org" ))
 
 ; tf not used heavily atm
-			(setq org-agenda-custom-commands ; options - todo, tags, tags-todo
-						'(("d" "Dev" tags-todo "DEV")
-							("e" "Emacs" tags-todo "EMACS")
-							("p" "Personal" tags-todo "PERS")
-							("r" "Research" tags-todo "RSCH")
-							("m" "Research" tags-todo "MAIN")
-))
+(setq org-agenda-custom-commands ; options - todo, tags, tags-todo
+			'(("d" "Dev" tags-todo "DEV")
+				("e" "Emacs" tags-todo "EMACS")
+				("p" "Personal" tags-todo "PERS")
+				("r" "Research" tags-todo "RSCH")
+				("m" "Research" tags-todo "MAIN")
+				))
 (setq org-agenda-start-on-weekday nil) ; start today
 
 (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
@@ -366,11 +364,23 @@
   :ensure t
   :init (global-flycheck-mode)) ; test
 
+(use-package eglot)
+;; if weirdness, add this line:
+; (add-to-list 'eglot-server-programs '(foo-mode . ("foo-language-server" "--args")))
+		(add-hook 'sh-mode-hook 'eglot-ensure)
+		(add-hook 'rust-mode-hook 'eglot-ensure)
+		(add-hook 'python-mode-hook 'eglot-ensure)
+   	(add-hook 'go-mode-hook 'eglot-ensure)
+   	(add-hook 'tex-mode-hook 'eglot-ensure)
+
+(use-package rustic)
+(setq rustic-lsp-client 'eglot)
+
 (use-package cargo)
 
 (use-package rust-mode
   :config
-	(hrs/append-to-path "~/.cargo/bin")
+	      (hrs/append-to-path "~/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package racer
@@ -387,26 +397,13 @@
 
 (use-package flycheck-rust) ; runs on save buffer
 (with-eval-after-load 'rust-mode
-		(add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+		(add-hook 'flycheck-mode-hook 'flycheck-rust-setup))
 
 (add-hook 'rust-mode-hook
 		(lambda ()
 		(setq cargo-minor-mode t) ; Cc Cc C(b/r/t)
-		(local-set-key (kbd "C-M-c p") 'rust-debug-println)
 		(local-set-key (kbd "C-h C-h") 'racer-describe-tooltip)
 	))
-
-(fset 'rust-debug-println
-   "println!(\"debug:{:?}\",\C-f\;\C-b\C-b")
-
-(defun rust-sanity-println (var)
-  "check my sanity with a println"
-(interactive)
-)
-
-(defun rust-comment-sanity-checks ()
-  "comment out all sanity printlns"
-  (interactive))
 
 (use-package go-mode)
 (use-package go-errcheck)
@@ -475,3 +472,23 @@
 	(add-hook 'tex-mode-hook
 						(lambda ()
 						(latex-electric-env-pair-mode)))
+
+(defun set-frame-size-according-to-resolution ()
+  (interactive)
+  (if window-system
+  (progn
+    ;; use 120 char wide window for largeish displays
+    ;; and smaller 80 column windows for smaller displays
+    ;; pick whatever numbers make sense for you
+    (if (> (x-display-pixel-width) 1280)
+           (add-to-list 'default-frame-alist (cons 'width 100))
+           (add-to-list 'default-frame-alist (cons 'width 80)))
+    ;; for the height, subtract a couple hundred pixels
+    ;; from the screen height (for panels, menubars and
+    ;; whatnot), then divide by the height of a char to
+    ;; get the height we want
+    (add-to-list 'default-frame-alist
+         (cons 'height (/ (- (x-display-pixel-height) 60) ; close as I can get to full left half
+                             (frame-char-height)))))))
+
+(set-frame-size-according-to-resolution)

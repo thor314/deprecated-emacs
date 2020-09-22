@@ -412,10 +412,11 @@ files. Projectile-commander is useful magit-like.
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 #+end_src
 ** =magit= - git version control inside emacs. C-x g
-[[https://github.com/magit/magit][magit]]. Interface to git. [[https://magit.vc/manual/forge/][Forge]] to interface with github. Awful documentation on
-forge. Trying [[https://gist.github.com/bmhatfield/cc21ec0a3a2df963bffa3c1f884b676b][this]] solution.
+[[https://github.com/magit/magit][magit]]. Interface to git. [[https://magit.vc/manual/forge/][Forge]] to interface with github. Sorta shitty
+documentation on forge. Trying [[https://gist.github.com/bmhatfield/cc21ec0a3a2df963bffa3c1f884b676b][this]] solution. Hoo baby it worked.
 #+begin_src emacs-lisp
   (use-package magit)
+(use-package forge)
 #+end_src
 ** =rip-grep= - to directory search; C-s-0 or C-c k
 For fast text search through my directories, [[https://github.com/BurntSushi/ripgrep][ripgrep]] is a super fast rust
@@ -590,39 +591,6 @@ and end when state changes to WAITING.
 	 				'wicked/org-clock-out-if-waiting)))
 #+end_src
 
-*** Clocktable range report =org-dblock-write:range
-Again courtesy of Sacha Chua
-: #+begin_src emacs-lisp
-(defun org-dblock-write:rangereport (params)
-  "Display day-by-day time reports."
-  (let* ((ts (plist-get params :tstart))
-         (te (plist-get params :tend))
-         (start (time-to-seconds
-                 (apply 'encode-time (org-parse-time-string ts))))
-         (end (time-to-seconds
-               (apply 'encode-time (org-parse-time-string te))))
-         day-numbers)
-    (setq params (plist-put params :tstart nil))
-    (setq params (plist-put params :end nil))
-    (while (<= start end)
-      (save-excursion
-        (insert "\n\n"
-                (format-time-string (car org-time-stamp-formats)
-                                    (seconds-to-time start))
-                "----------------\n")
-        (org-dblock-write:clocktable
-         (plist-put
-          (plist-put
-           params
-           :tstart
-           (format-time-string (car org-time-stamp-formats)
-                               (seconds-to-time start)))
-          :tend
-          (format-time-string (car org-time-stamp-formats)
-                              (seconds-to-time end))))
-        (setq start (+ 86400 start))))))
-#+end_src
-*** TODO add checklist capture support
 
 ** org-agenda
 [[https://orgmode.org/manual/Agenda-Views.html][All you ever wanted to know.]]
@@ -633,15 +601,16 @@ Again courtesy of Sacha Chua
 
 *** And give org-agenda some custom tags
 #+begin_src emacs-lisp
-		; tf not used heavily atm
-			(setq org-agenda-custom-commands ; options - todo, tags, tags-todo
-						'(("d" "Dev" tags-todo "DEV")
-							("e" "Emacs" tags-todo "EMACS")
-							("p" "Personal" tags-todo "PERS")
-							("r" "Research" tags-todo "RSCH")
-							("m" "Research" tags-todo "MAIN")
-))
-(setq org-agenda-start-on-weekday nil) ; start today
+																					; tf not used heavily atm
+	(setq org-agenda-custom-commands ; options - todo, tags, tags-todo
+				'(("d" "Dev" tags-todo "DEV")
+					("e" "Emacs" tags-todo "EMACS")
+					("p" "Personal" tags-todo "PERS")
+					("r" "Research" tags-todo "RSCH")
+					("m" "Research" tags-todo "MAIN")
+					))
+	(setq org-agenda-start-on-weekday nil) ; start today
+
 #+end_src
 
 *** column view headings: Task Total-Time Time-Stamp, use Cc Cx Cc, q to exit
@@ -728,23 +697,27 @@ just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-in
   :init (global-flycheck-mode)) ; test
 #+end_src
 
-* Rust
-** Setup cargo, rustmode, rustfmt, reminders
-*** Reminders and Warnings
-- =Rustic=: not worth bothering unless I want RLS, which I don't feel a need for
-- =Rust-auto-use= - unmaintained, badly documented
+* LSP, Rust-analyzer, and Rustic (new)
 
-*** =Cargo.el= minor mode for nice Cc Cc (brt) build run test
-[[https://github.com/kwrooijen/cargo.el][cargo.el]] needs to run these before some stuff works
-rustup component add rustfmt-preview
+#+begin_src emacs-lisp
+(use-package rustic)
+(setq rustic-lsp-client 'eglot)
+#+end_src
+
+* Rust
+Do: rustup component add rls rust-analysis rust-src
+cargo +nightly install racer
 cargo install cargo-check
 cargo install clippy
 cargo install cargo-edit  - {add,rm,upgrade} crates from toml
 cargo install cargo-audit
+rustup component add rustfmt-preview
+** Setup cargo
+[[https://github.com/kwrooijen/cargo.el][cargo.el.]]
 #+begin_src emacs-lisp
 (use-package cargo)
 #+end_src
-*** Use =rust-mode=, =rustfmt=, cargo path
+** Use =rust-mode=, =rustfmt=, cargo path
 #+begin_src emacs-lisp
   (use-package rust-mode
     :config
@@ -754,7 +727,7 @@ cargo install cargo-audit
 
 ** =Racer= - autocompletion and docs with company
 [[https://github.com/racer-rust/emacs-racer][racer docs]]
-Have to install with cargo before use: `cargo +nightly install racer`
+
 May have to run `rustup toolchain add nightly` as well.
 Use tab for autocomplete without waiting.
 #+begin_src emacs-lisp
@@ -783,30 +756,13 @@ Also, use C-c p to throw a debug println in.
 #+begin_src emacs-lisp
 	(use-package flycheck-rust) ; runs on save buffer
 	(with-eval-after-load 'rust-mode
-			(add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+			(add-hook 'flycheck-mode-hook 'flycheck-rust-setup))
 
 	(add-hook 'rust-mode-hook
 			(lambda ()
 			(setq cargo-minor-mode t) ; Cc Cc C(b/r/t)
-			(local-set-key (kbd "C-M-c p") 'rust-debug-println)
 			(local-set-key (kbd "C-h C-h") 'racer-describe-tooltip)
 		))
-#+end_src
-** Rust Helper function
-Unfinished.
-Insert and comment out printlns where useful.
-#+begin_src emacs-lisp
-(fset 'rust-debug-println
-   "println!(\"debug:{:?}\",\C-f\;\C-b\C-b")
-
-(defun rust-sanity-println (var)
-  "check my sanity with a println"
-(interactive)
-)
-
-(defun rust-comment-sanity-checks ()
-  "comment out all sanity printlns"
-  (interactive))
 #+end_src
 
 * Go
@@ -947,22 +903,9 @@ The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.
 - There is no difference between `global-set-key` and `define-key global-map`.
 - what is #'<function>? add-hook 'blah-hook #'<function> = this is a function;
   which is why we use it when adding hooks.
-* Graveyard
-** yasnippet code snippets - often fails to load properly
-[[https://github.com/joaotavora/yasnippet][yasnippet docs]], [[https://github.com/AndreaCrotti/yasnippet-snippets][snippets sold separately]]
-: #+begin_src emacs-lisp
-	(use-package yasnippet-snippets)
-	(use-package yasnippet
-		:config  (yas-reload-all) ; must come after snippet-dirs
-		:hook ('prog-mode #'yas-minor-mode)
-		:bind ("C-c y" .  yas-insert-snippet))
-(setq yas-snippet-dirs
-      '("~/.emacs.d/snippets"                 ;; personal snippets
-        ))
-: #+end_src
-
+* Skeptic Zone
 ** Window size - weird interaction with maximizing window
-
+#+begin_src emacs-lisp
 (defun set-frame-size-according-to-resolution ()
   (interactive)
   (if window-system
@@ -982,6 +925,43 @@ The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.
                              (frame-char-height)))))))
 
 (set-frame-size-according-to-resolution)
+#+end_src
+* Graveyard
+** Eglot - dunno how to configure for rust-analyzer, so using LSP instead
+[[https://github.com/joaotavora/eglot#differences-to-lsp-modeel][eglot.]] a language server that does nice things for me in a simple way.
+[[https://github.com/rust-lang/rls][rls]].
+: #+begin_src emacs-lisp
+		(use-package eglot)
+;; if weirdness, add this line:
+; (add-to-list 'eglot-server-programs '(foo-mode . ("foo-language-server" "--args")))
+		(add-hook 'sh-mode-hook 'eglot-ensure)
+		(add-hook 'rust-mode-hook 'eglot-ensure)
+		(add-hook 'python-mode-hook 'eglot-ensure)
+   	(add-hook 'go-mode-hook 'eglot-ensure)
+   	(add-hook 'tex-mode-hook 'eglot-ensure)
+:  #+end_src
+
+** Which-key - sometimes crashes emacs on Cx Cg
+Confirmed, this is crashing emacs. Sad face.
+was crashing my config on Cx Cg
+Testing to see if which key is crashing my setup on Cc|x Cg
+:#+begin_src emacs-lisp
+(use-package which-key)
+(which-key-mode)
+:#+end_src
+** yasnippet code snippets - often fails to load properly, too much hassle
+[[https://github.com/joaotavora/yasnippet][yasnippet docs]], [[https://github.com/AndreaCrotti/yasnippet-snippets][snippets sold separately]]
+: #+begin_src emacs-lisp
+	(use-package yasnippet-snippets)
+	(use-package yasnippet
+		:config  (yas-reload-all) ; must come after snippet-dirs
+		:hook ('prog-mode #'yas-minor-mode)
+		:bind ("C-c y" .  yas-insert-snippet))
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets"                 ;; personal snippets
+        ))
+: #+end_src
+
 ** Centaur Tabs - crashes emacs on reload
 	 (use-package centaur-tabs
 		 :demand ;; don't defer load, recommended
@@ -1002,11 +982,6 @@ The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.
 get [[https://github.com/vibhavp/emacs-xkcd][xkcd]]. Turns out this makes it impossible to reload for unknown reasons.
 	(use-package xkcd)
 	(global-set-key (kbd "<f4>") 'xkcd)
-** Which-key - sometimes crashes emacs on Cx Cg
-was crashing my config on Cx Cg
-Testing to see if which key is crashing my setup on Cc|x Cg
-(use-package which-key)
-(which-key-mode)
 ** LSP- too much fiddling, use eglot instead
 ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
 ;(setq lsp-keymap-prefix "s-l")
