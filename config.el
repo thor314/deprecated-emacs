@@ -118,11 +118,6 @@
 	(call-process-shell-command
 	 (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
 
-(use-package exec-path-from-shell
-:init (exec-path-from-shell-initialize)
-:config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
-(exec-path-from-shell-initialize)))
-
 (fset 'tk-org-insert-lisp-block
    "#+begin_src emacs-lisp\C-m\C-m#+end_src\C-p")
 (global-set-key (kbd "<f2>") 'tk-org-insert-lisp-block)
@@ -147,12 +142,12 @@
 (setq subword-mode t)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
-      (global-linum-mode 1)
-      (global-hl-line-mode)
-      (setq electric-pair-mode 1)
-      (use-package diff-hl
+(global-linum-mode 1)
+(global-hl-line-mode)
+(setq electric-pair-mode 1)
+(use-package diff-hl
 :config
-      (global-diff-hl-mode))
+(global-diff-hl-mode))
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -233,6 +228,11 @@
 
 (use-package magit)
 (use-package forge)
+
+(use-package exec-path-from-shell
+:init (exec-path-from-shell-initialize)
+:config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
+(exec-path-from-shell-initialize)))
 
 (use-package rg)
 (hrs/append-to-path "/usr/local/bin") ; oddly wasn't globally in path, fixing that
@@ -364,23 +364,15 @@
   :ensure t
   :init (global-flycheck-mode)) ; test
 
-(use-package eglot)
-;; if weirdness, add this line:
-; (add-to-list 'eglot-server-programs '(foo-mode . ("foo-language-server" "--args")))
-		(add-hook 'sh-mode-hook 'eglot-ensure)
-		(add-hook 'rust-mode-hook 'eglot-ensure)
-		(add-hook 'python-mode-hook 'eglot-ensure)
-   	(add-hook 'go-mode-hook 'eglot-ensure)
-   	(add-hook 'tex-mode-hook 'eglot-ensure)
+(use-package lsp)
 
 (use-package rustic)
-(setq rustic-lsp-client 'eglot)
 
 (use-package cargo)
 
 (use-package rust-mode
   :config
-	      (hrs/append-to-path "~/.cargo/bin")
+	(hrs/append-to-path "~/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package racer

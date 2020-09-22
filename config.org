@@ -207,18 +207,6 @@ append to path, insert generated password, display a desktop notification
 		 (format "notify-send -t 2000 \"%s\" \"%s\"" title message)))
 #+end_src
 
-** exec-path-from-shell - magit relies on this
-[[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] is supposed to be good to have around when I see the text
-"no <> executable found", but I'm getting "function def is void:
-exec-path-from-shell" whenever I try using it. Therefore, =hrs/append-path= has
-gotten more use than this.
- #+begin_src emacs-lisp
- (use-package exec-path-from-shell
- :init (exec-path-from-shell-initialize)
- :config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
- (exec-path-from-shell-initialize)))
- #+end_src
-
 ** Macro game going strong
 My lisp and rust block macros
 #+begin_src emacs-lisp
@@ -418,6 +406,14 @@ documentation on forge. Trying [[https://gist.github.com/bmhatfield/cc21ec0a3a2d
   (use-package magit)
 (use-package forge)
 #+end_src
+** exec-path-from-shell - magit relies on this
+[[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]. gives emacs a look at shell environment variables.
+ #+begin_src emacs-lisp
+ (use-package exec-path-from-shell
+ :init (exec-path-from-shell-initialize)
+ :config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
+ (exec-path-from-shell-initialize)))
+ #+end_src
 ** =rip-grep= - to directory search; C-s-0 or C-c k
 For fast text search through my directories, [[https://github.com/BurntSushi/ripgrep][ripgrep]] is a super fast rust
 implementation of grep, built on Rust's regex engine, binary name rg. M-x
@@ -698,10 +694,11 @@ just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-in
 #+end_src
 
 * LSP, Rust-analyzer, and Rustic (new)
-
+#+begin_src emacs-lisp
+	(use-package lsp)
+#+end_src
 #+begin_src emacs-lisp
 (use-package rustic)
-(setq rustic-lsp-client 'eglot)
 #+end_src
 
 * Rust
