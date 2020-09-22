@@ -364,7 +364,7 @@
   :ensure t
   :init (global-flycheck-mode)) ; test
 
-(use-package lsp)
+(use-package lsp-mode)
 
 (use-package rustic)
 

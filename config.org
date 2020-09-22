@@ -695,7 +695,7 @@ just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-in
 
 * LSP, Rust-analyzer, and Rustic (new)
 #+begin_src emacs-lisp
-	(use-package lsp)
+	(use-package lsp-mode)
 #+end_src
 #+begin_src emacs-lisp
 (use-package rustic)
