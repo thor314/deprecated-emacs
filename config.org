@@ -413,7 +413,7 @@ files. Projectile-commander is useful magit-like.
 #+end_src
 ** =magit= - git version control inside emacs. C-x g
 [[https://github.com/magit/magit][magit]]. Interface to git. [[https://magit.vc/manual/forge/][Forge]] to interface with github. Awful documentation on
-forge.
+forge. Trying [[https://gist.github.com/bmhatfield/cc21ec0a3a2df963bffa3c1f884b676b][this]] solution.
 #+begin_src emacs-lisp
   (use-package magit)
 #+end_src
