@@ -301,8 +301,8 @@ minions mode changes what minor are listed in the bar
 #+begin_src emacs-lisp
   (use-package minions
   :config
-  (setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
-        minions-mode-line-delimiters '("" . ""))
+;  (setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
+;        minions-mode-line-delimiters '("" . ""))
   (minions-mode 1))
 #+end_src
 
@@ -338,6 +338,7 @@ Using [[https://oremacs.com/swiper/][oremacs]] user manual heavily.
 [[https://writequit.org/denver-emacs/presentations/2017-04-11-ivy.html][this link's much nicer tho]]
 New learn: use C-c v/V to store the current set of windows open.
 *** Standard commands mostly replace standards. Ch i/l info-lookup/library
+Copy pasted from docs.
 #+begin_src emacs-lisp
 (use-package ivy)
 (use-package swiper) ; search extension to ivy
@@ -403,38 +404,38 @@ files. Projectile-commander is useful magit-like.
 [[https://github.com/magit/magit][magit]]. Interface to git. [[https://magit.vc/manual/forge/][Forge]] to interface with github. Sorta shitty
 documentation on forge. Trying [[https://gist.github.com/bmhatfield/cc21ec0a3a2df963bffa3c1f884b676b][this]] solution. Hoo baby it worked.
 #+begin_src emacs-lisp
-  (use-package magit)
-(use-package forge)
+	(use-package magit)
+	(use-package forge)
 #+end_src
-** exec-path-from-shell - magit relies on this
-[[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]. gives emacs a look at shell environment variables.
+** =exec-path-from-shell= - magit relies on this
+[[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]. gives emacs a look at shell environment variables. Most
+useful on OS X.
  #+begin_src emacs-lisp
  (use-package exec-path-from-shell
  :init (exec-path-from-shell-initialize)
  :config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
  (exec-path-from-shell-initialize)))
  #+end_src
-** =rip-grep= - to directory search; C-s-0 or C-c k
-For fast text search through my directories, [[https://github.com/BurntSushi/ripgrep][ripgrep]] is a super fast rust
-implementation of grep, built on Rust's regex engine, binary name rg. M-x
-counsel-rg is also super nice, C-c k. [[https://github.com/dajva/rg.el][Emacs docs]]
+** =rip-grep= - to directory search; C-c k
+[[https://github.com/BurntSushi/ripgrep][ripgrep]] is the fastest implementation of grep, built on Rust's regex engine,
+binary name rg. Usage: =C-c k=. [[https://github.com/dajva/rg.el][rg.el.]] Ties in with counsel.
 #+begin_src emacs-lisp
 	(use-package rg)
 	(hrs/append-to-path "/usr/local/bin") ; oddly wasn't globally in path, fixing that
 #+end_src
 
 ** =Dired-X= - run arbitrary shell cmds in dired; press ! in dired
-Dired-x extends Dired to run commands on marked files by pressing "!"
-rarely use it
+[[https://www.gnu.org/software/emacs/manual/html_node/dired-x/index.html][Dired-X.]]  [[https://www.gnu.org/software/emacs/manual/html_node/dired-x/Features.html#Features][Features]]: Omit uninteresting files, guess and run shell commands, file
+marking. I use it minimally.
 #+begin_src emacs-lisp
 (add-hook 'dired-load-hook
           (lambda ()
             (load "dired-x")))
 #+end_src
-
 ** =dumb-jump= - jump to definition with CMs and CMr
-dumb-jump-go has two functions: go and back.
-The defaults of CM-g and CM-p weren't workin for me so I changed em.
+[[https://github.com/jacktasia/dumb-jump][dumb-jump.]] Jump to definition. Usage: in prog-mode, =C-M-s | C-M-R=.
+Other packages often include something similar, eg, xref, racer. Use this when
+those aren't available.
 #+begin_src emacs-lisp
 (use-package dumb-jump)
 (global-set-key (kbd "C-M-s") 'dumb-jump-go)
@@ -443,6 +444,7 @@ The defaults of CM-g and CM-p weren't workin for me so I changed em.
 (setq dumb-jump-selector 'ivy)
 #+end_src
 ** =re-builder= - for building and testing regex (try C-c C-w)
+[[https://www.emacswiki.org/emacs/ReBuilder][re Builder.]] Usage: =M-x re-builder=, test patterns in buffer.
 Set re-builder to "string mode" (default req.s double backslash)
 #+begin_src emacs-lisp
 (use-package re-builder)
@@ -456,6 +458,18 @@ For copy-cut-paste things without affecting kill ring.
 (simpleclip-mode 1)
 #+end_src
 
+** =Which-key= - sometimes crashes emacs on Cx Cg. -> Only turn it on, on demand.
+Confirmed, this is crashing emacs. Sad face.
+#+begin_src emacs-lisp
+(use-package which-key)
+#+end_src
+** =free-keys & bind-keys= - show unbound/bound keys
+[[https://github.com/Fuco1/free-keys][free-keys.]] Usage: =m-x free-keys=.
+[[https://github.com/jwiegley/use-package/blob/master/bind-key.el][bind-key]]. Usage:
+#+begin_src emacs-lisp
+(use-package free-keys)
+(use-package bind-key)
+#+end_src
 * Fun =D
 ** Emojify
 [[https://github.com/iqbalansari/emacs-emojify][emojify.]]
@@ -693,29 +707,49 @@ just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-in
   :init (global-flycheck-mode)) ; test
 #+end_src
 
-* LSP, Rust-analyzer, and Rustic (new)
+* LSP
+[[https://emacs-lsp.github.io/lsp-mode/page/installation/][lsp installation guide]].
 #+begin_src emacs-lisp
-	(use-package lsp-mode)
-#+end_src
-#+begin_src emacs-lisp
-(use-package rustic)
+;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+(setq lsp-keymap-prefix "C-M-c")
+(use-package lsp-mode
+    :hook (rust-mode . lsp) ; rust?
+    :commands lsp)
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;(use-package dap-mode) ; debugger
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+;(use-package dap-rust)
 #+end_src
 
+#+RESULTS:
+
 * Rust
-Do: rustup component add rls rust-analysis rust-src
+** Tips
+rustup component add rls rust-analysis rust-src
 cargo +nightly install racer
 cargo install cargo-check
 cargo install clippy
 cargo install cargo-edit  - {add,rm,upgrade} crates from toml
 cargo install cargo-audit
 rustup component add rustfmt-preview
+** Rustic & Rust-analyzer
+[[https://github.com/brotzeit/rustic][Rustic mode.]] Simple extension of rust-mode.
+[[https://rust-analyzer.github.io/manual.html][Rust-analyzer]]. Great docs.
+#+begin_src emacs-lisp
+(use-package rustic)  ; many nifty convenience functions. defaults to rust-analyzer > rls
+#+end_src
 ** Setup cargo
 [[https://github.com/kwrooijen/cargo.el][cargo.el.]]
 #+begin_src emacs-lisp
 (use-package cargo)
+(use-package toml-mode)
 #+end_src
 ** Use =rust-mode=, =rustfmt=, cargo path
-#+begin_src emacs-lisp
+
+: #+begin_src emacs-lisp
   (use-package rust-mode
     :config
 		(hrs/append-to-path "~/.cargo/bin")
@@ -926,7 +960,6 @@ The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.
 * Graveyard
 ** Eglot - dunno how to configure for rust-analyzer, so using LSP instead
 [[https://github.com/joaotavora/eglot#differences-to-lsp-modeel][eglot.]] a language server that does nice things for me in a simple way.
-[[https://github.com/rust-lang/rls][rls]].
 : #+begin_src emacs-lisp
 		(use-package eglot)
 ;; if weirdness, add this line:
@@ -938,14 +971,6 @@ The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.
    	(add-hook 'tex-mode-hook 'eglot-ensure)
 :  #+end_src
 
-** Which-key - sometimes crashes emacs on Cx Cg
-Confirmed, this is crashing emacs. Sad face.
-was crashing my config on Cx Cg
-Testing to see if which key is crashing my setup on Cc|x Cg
-:#+begin_src emacs-lisp
-(use-package which-key)
-(which-key-mode)
-:#+end_src
 ** yasnippet code snippets - often fails to load properly, too much hassle
 [[https://github.com/joaotavora/yasnippet][yasnippet docs]], [[https://github.com/AndreaCrotti/yasnippet-snippets][snippets sold separately]]
 : #+begin_src emacs-lisp

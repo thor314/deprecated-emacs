@@ -142,12 +142,12 @@
 (setq subword-mode t)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
-(global-linum-mode 1)
-(global-hl-line-mode)
-(setq electric-pair-mode 1)
-(use-package diff-hl
+      (global-linum-mode 1)
+      (global-hl-line-mode)
+      (setq electric-pair-mode 1)
+      (use-package diff-hl
 :config
-(global-diff-hl-mode))
+      (global-diff-hl-mode))
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -167,10 +167,10 @@
 )
 
 (use-package minions
-:config
-(setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
-      minions-mode-line-delimiters '("" . ""))
-(minions-mode 1))
+  :config
+;  (setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
+;        minions-mode-line-delimiters '("" . ""))
+  (minions-mode 1))
 
 (dolist (hook '(text-mode-hook)) ; when entering text mode
 			(add-hook hook (lambda () (flyspell-mode 1)))) ; add hook to turn on flyspell
@@ -364,16 +364,23 @@
   :ensure t
   :init (global-flycheck-mode)) ; test
 
-(use-package lsp-mode)
+;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+(setq lsp-keymap-prefix "C-M-c")
+(use-package lsp-mode
+    :hook (rust-mode . lsp) ; rust?
+    :commands lsp)
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;(use-package dap-mode) ; debugger
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+;(use-package dap-rust)
 
-(use-package rustic)
+(use-package rustic)  ; many nifty convenience functions. defaults to rust-analyzer > rls
 
 (use-package cargo)
-
-(use-package rust-mode
-  :config
-	(hrs/append-to-path "~/.cargo/bin")
-  (setq rust-format-on-save t))
+(use-package toml-mode)
 
 (use-package racer
 	:config (setq company-tooltip-align-annotations t)
