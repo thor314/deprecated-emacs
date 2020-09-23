@@ -1,4 +1,4 @@
-Reminder to use C-c ' when editing source blocks for nice things like flycheck.
+Use C-c ' when editing src for nice things like flycheck
 * configure =use-package= and path
 ** Do the stuff
 =use-package= is 'require on [[https://duckduckgo.com/?q=usepackage+emacs&t=brave&ia=software][steroids]]. It downloads things for me. Yay.
@@ -17,25 +17,17 @@ It means install package if not already installed.
 #+end_src
 
 ** =Use-package= instructions (because I forget them)
-We got some keywords and some usage patterns.
-:init - execute stuff before loading. =:init (setq my-var t)=
-:config - execute stuff after loading. =:config (foo-mode t)=
-:bind - set keybindings. =:bind ("C-g" . keyboard-quit)= don't forget the '.'
-:bind-keymap - eg projectile, set a command-map prefix.
-=:bind-keymap ("C-c p" . projectile-command-map))=
-:mode, interpreter - when extension is blah, use mode, and interpreter blah.
-"\\.py\\'" . python-mode)=
-=:interpreter ("python" . python-mode)=
-:magic, magic-fallback - like mode, matches code against a regex.
-=:magic ("%PDF" . pdf-view-mode)=
-:hook, hook to use package on blah mode, prog mode below eg:
-=(use-package ace-jump-mode :hook (prog-mode text-mode))=
-:custom - customize package variables.
-=:custom (comint-buffer-maximum-size 20000 "Increase comint buffer size.")=
-:custom-face - customize a face for a mode.
-=:custom-face (eruby-standard-face ((t (:slant italic))))=
+Okay, so here's the deal. I went super gung-ho on =use-package= based
+configuration for awhile. I regret that now. I regret that because it's simpler
+to "learn to write emacs-lisp gud", and know how to debug that, than to use the
+fancy =use-package= macro system. Now I only do fancy =use-package= stuff
+by copy pasting others' nonsense, and revert to emacs lisp if it's causing probs.
 
-There's more, but I'm lazy now.
+_Basics For Reference_
+:init - execute stuff before loading. =:init (setq my-var t)= :config - execute
+stuff after loading. =:config (foo-mode t)= :bind - set keybindings. =:bind
+("C-g" . keyboard-quit)= don't forget the '.' :bind-keymap - eg projectile, set
+a command-map prefix.
 
 * use sensible-defaults.el (thank you hrs)
 Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings. This is really good to read
@@ -391,7 +383,7 @@ jump to visible text.
 (global-set-key (kbd "M-t") 'avy-goto-word-1)
 #+end_src
 
-** =Counsel-projectile= - jump around project files, Cc p m , Cc p SPC, Ccp(f/p/0=org, s=search, )
+** =Counsel-projectile= - jump around project files, Ccp m, Ccp p
 [[https://github.com/bbatsov/projectile][Projectile]]: finding and moving around .git or .projectile controlled project
 files. Projectile-commander is useful magit-like.
 #+begin_src emacs-lisp
@@ -463,13 +455,11 @@ Confirmed, this is crashing emacs. Sad face.
 #+begin_src emacs-lisp
 (use-package which-key)
 #+end_src
-** =free-keys & bind-keys= - show unbound/bound keys
+** =free-keys= - show unbound keys
 [[https://github.com/Fuco1/free-keys][free-keys.]] Usage: =m-x free-keys=.
-[[https://github.com/jwiegley/use-package/blob/master/bind-key.el][bind-key]]. Usage:
 #+begin_src emacs-lisp
 (use-package free-keys)
-(use-package bind-key)
-#+end_src
+#+end_src-
 * Fun =D
 ** Emojify
 [[https://github.com/iqbalansari/emacs-emojify][emojify.]]
@@ -709,22 +699,20 @@ just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-in
 
 * LSP
 [[https://emacs-lsp.github.io/lsp-mode/page/installation/][lsp installation guide]].
+[[https://github.com/Alexander-Miller/treemacs][treemacs.]]
+Try: =lsp-treemacs-quick-fix= or =x= when at an error list
 #+begin_src emacs-lisp
-;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-(setq lsp-keymap-prefix "C-M-c")
-(use-package lsp-mode
-    :hook (rust-mode . lsp) ; rust?
-    :commands lsp)
-;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
-;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-;(use-package dap-mode) ; debugger
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-;(use-package dap-rust)
+	(setq lsp-keymap-prefix "M-n")
+	(use-package lsp-mode
+			:hook (rust-mode . lsp)
+			:commands lsp)
+	;; optionally
+	(use-package lsp-ui :commands lsp-ui-mode)
+  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+	(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  (use-package dap-mode) ; debugger - no dap-rust yet
+	;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 #+end_src
-
-#+RESULTS:
 
 * Rust
 ** Tips
@@ -735,33 +723,30 @@ cargo install clippy
 cargo install cargo-edit  - {add,rm,upgrade} crates from toml
 cargo install cargo-audit
 rustup component add rustfmt-preview
-** Rustic & Rust-analyzer
+** Rustic & Rust-analyzer. Racer m
 [[https://github.com/brotzeit/rustic][Rustic mode.]] Simple extension of rust-mode.
 [[https://rust-analyzer.github.io/manual.html][Rust-analyzer]]. Great docs.
+Of Note: =lsp-rust-analyzer-expand-macro=, =rustic-<>=, =lsp-execute-code-action=
 #+begin_src emacs-lisp
 (use-package rustic)  ; many nifty convenience functions. defaults to rust-analyzer > rls
 #+end_src
+*** Rust-mode, unnecessary with rustic. Kept in case I revert
+: #+begin_src emacs-lisp
+  (use-package rust-mode
+    :config
+		(hrs/append-to-path "~/.cargo/bin")
+    (setq rust-format-on-save t))
+: #+end_src
+
 ** Setup cargo
 [[https://github.com/kwrooijen/cargo.el][cargo.el.]]
 #+begin_src emacs-lisp
 (use-package cargo)
 (use-package toml-mode)
 #+end_src
-** Use =rust-mode=, =rustfmt=, cargo path
-
-: #+begin_src emacs-lisp
-  (use-package rust-mode
-    :config
-		(hrs/append-to-path "~/.cargo/bin")
-    (setq rust-format-on-save t))
-#+end_src
-
 ** =Racer= - autocompletion and docs with company
-[[https://github.com/racer-rust/emacs-racer][racer docs]]
-
-May have to run `rustup toolchain add nightly` as well.
-Use tab for autocomplete without waiting.
-#+begin_src emacs-lisp
+[[https://github.com/racer-rust/emacs-racer][racer docs]]. Code auto-completion and find definitions.
+: #+begin_src emacs-lisp
 		(use-package racer
 		:config (setq company-tooltip-align-annotations t)
 		:hook ((rust-mode . racer-mode)

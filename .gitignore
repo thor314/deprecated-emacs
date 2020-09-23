@@ -11,3 +11,4 @@ rust-playground
 transient
 url
 .lsp-session-v1
+.cache/

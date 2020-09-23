@@ -253,6 +253,11 @@
 (use-package simpleclip)
 (simpleclip-mode 1)
 
+(use-package which-key)
+
+(use-package free-keys)
+(use-package bind-key)
+
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
@@ -365,7 +370,7 @@
   :init (global-flycheck-mode)) ; test
 
 ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-(setq lsp-keymap-prefix "C-M-c")
+(setq lsp-keymap-prefix "M-n")
 (use-package lsp-mode
     :hook (rust-mode . lsp) ; rust?
     :commands lsp)
@@ -381,14 +386,6 @@
 
 (use-package cargo)
 (use-package toml-mode)
-
-(use-package racer
-	:config (setq company-tooltip-align-annotations t)
-	:hook ((rust-mode . racer-mode)
-	(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
-	(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
-	:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
-;	(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
 
 (use-package rust-playground)
 
