@@ -126,6 +126,9 @@
    "#+begin_src rust\C-m\C-m#+end_src\C-p")
 (global-set-key (kbd "<f3>") 'tk-org-insert-rust-block)
 
+(define-key global-map (kbd "RET") 'newline-and-indent)
+(define-key global-map (kbd "<f7>") 'eshell)
+
 (setq make-backup-files nil) ; none of these~
 (setq auto-save-default t)
 
@@ -142,12 +145,12 @@
 (setq subword-mode t)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
-      (global-linum-mode 1)
-      (global-hl-line-mode)
-      (setq electric-pair-mode 1)
-      (use-package diff-hl
+(global-linum-mode 1)
+(global-hl-line-mode)
+(setq electric-pair-mode 1)
+(use-package diff-hl
 :config
-      (global-diff-hl-mode))
+(global-diff-hl-mode))
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -179,13 +182,6 @@
 ;						(flyspell-prog-mode)
 ;					))
 (setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
-
-(use-package workgroups2
-	:config
-(setq wg-session-file "~/.emacs.d/workgroups")
-(setq wg-emacs-exit-save-behavior 'save))      ; Options: 'save 'ask nil
-(setq wg-prefix-key (kbd "C-c z"))
-(workgroups-mode)
 
 (use-package ivy)
 (use-package swiper) ; search extension to ivy
@@ -255,9 +251,6 @@
 
 (use-package which-key)
 
-(use-package free-keys)
-(use-package bind-key)
-
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
@@ -300,7 +293,7 @@
 				(local-set-key (kbd "C-c C-x C-l") 'org-clock-in-last)
 ))
 
-(setq org-clock-idle-teme 15) ;prompt after 15 idle minutes.
+(setq org-clock-idle-time 15) ;prompt after 15 idle minutes.
 
 (setq org-agenda-files '("~/org" ))
 
@@ -313,8 +306,6 @@
 				("m" "Research" tags-todo "MAIN")
 				))
 (setq org-agenda-start-on-weekday nil) ; start today
-
-(setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
 
 (setq org-tag-alist '(("dev" . d) ("personal" . ?p) ("research" . ?r) ("main" . ?m)))
 
@@ -361,31 +352,45 @@
 (setq graphviz-dot-indent-width 4))
 (setq org-roam-graph-viewer "/Applications/Safari.app/Contents/MacOS/safari")
 
-
-
 (setq-default tab-width 2)
 
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode)) ; test
 
-;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
 (setq lsp-keymap-prefix "M-n")
 (use-package lsp-mode
-    :hook (rust-mode . lsp) ; rust?
-    :commands lsp)
+		:hook (rustic-mode . lsp)
+		:hook (sh-mode . lsp)
+		:hook(go-mode . lsp)
+		:commands lsp)
 ;; optionally
 (use-package lsp-ui :commands lsp-ui-mode)
-;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-;(use-package dap-mode) ; debugger
+(use-package lsp-ivy :commands lsp-ivy-workspa ce-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package dap-mode) ; debugger - no dap-rust yet
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-;(use-package dap-rust)
 
 (use-package rustic)  ; many nifty convenience functions. defaults to rust-analyzer > rls
+(setq rustic-lsp-server 'rust-analyzer)
+(setq lsp-rust-analyzer-server-command '("~/.cargo/bin/rust-analyzer"))
+(custom-set-faces
+  '(rustic-compilation-error ((t (:foreground "Red"))))
+  '(rustic-compilation-warning ((t (:inherit compilation-warning))))
+  '(rustic-compilation-message ((t (:inherit compilation-messape))))
+  '(rustic-compilation-info ((t (:inherit compilation-info))))
+  '(rustic-compilation-line ((t (:inherit compilation-line)))))
 
 (use-package cargo)
 (use-package toml-mode)
+
+(use-package racer
+:config (setq company-tooltip-align-annotations t)
+:hook ((rust-mode . racer-mode)
+(rust-mode . rustic-mode)
+(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
+(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
+:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
 
 (use-package rust-playground)
 

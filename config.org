@@ -212,14 +212,12 @@ My lisp and rust block macros
    "#+begin_src rust\C-m\C-m#+end_src\C-p")
 (global-set-key (kbd "<f3>") 'tk-org-insert-rust-block)
 #+end_src
-#+begin_src emacs-lisp
 
 ** Handy kbd shortcuts live here
 Return and indent instead of just return
 #+begin_src emacs-lisp
 (define-key global-map (kbd "RET") 'newline-and-indent)
-(define-key global-map (kbd "<f10>") 'eshell-command)
-(define-key global-map (kbd "<f9>") 'eshell)
+(define-key global-map (kbd "<f7>") 'eshell)
 #+end_src
 
 * Prettify emacs window appearance and general settings
@@ -314,14 +312,16 @@ Toy with this for awhile, then try out [[https://github.com/d12frosted/flyspell-
 ** work groups for remembering window setup ; Cc z [c/v/Cs/Cf]
 Want emacs to remember my window setup for stuff. Storing views in registers
 aren't persistent across sessions. [[https://github.com/pashinin/workgroups2][docs]].
-#+begin_src emacs-lisp
+Note that this can get buggy with treemacs, beware.
+; #+begin_src emacs-lisp
 	(use-package workgroups2
 		:config
 	(setq wg-session-file "~/.emacs.d/workgroups")
 	(setq wg-emacs-exit-save-behavior 'save))      ; Options: 'save 'ask nil
 	(setq wg-prefix-key (kbd "C-c z"))
 	(workgroups-mode)
-#+end_src
+;#+end_src
+
 * Cool Tools
 ** =ivy-mode=, with =counsel= and =swiper= - navigation and other things
 Ivy and helm do similar stuff, move ya from place to place and complete stuff.
@@ -497,7 +497,7 @@ don't indent newly expanded blocks.
 #+end_src
 *
 *** Org-download for images in org mode
-[[https://github.com/abo-abo/org-download][Org download docs]]
+[[https://github.com/abo-abo/org-download][Org download docs]] - drag images from outside of emacs into emacs buffers
 #+begin_src emacs-lisp
 (use-package org-download)
 #+end_src
@@ -547,6 +547,8 @@ time-prompt, tree-type, table-line-pos
 #+end_src
 
 *** Org-clock configuration
+Note, I've found org-clock to be pretty clunky to work with. Especially bad if
+Emacs exits irregularly/crashes. Toggl does better.
 **** keybind
 #+begin_src emacs-lisp
 	(add-hook 'org-mode-hook
@@ -556,42 +558,12 @@ time-prompt, tree-type, table-line-pos
 #+end_src
 
 **** propmt to resolve idle time after 15 idle minutes
-[[https://orgmode.org/manual/Resolving-idle-time.html#Resolving-idle-time][manual]] : if idle, eg did nothing for 20 minutes, emacs can prompt about weird
+[[https://orgmode.org/manual/Resolving-idle-time.html#Resolving-idle-time][manual]] : if idle, eg did nothing for 15 minutes, emacs can prompt about weird
 timers and idle time. Usually, respond to prompt with 's/k', or 'S/K' to then
-clockout.
+clock out.
 #+begin_src emacs-lisp
-(setq org-clock-idle-teme 15) ;prompt after 15 idle minutes.
+(setq org-clock-idle-time 15) ;prompt after 15 idle minutes.
 #+end_src
-**** Thanks [[https://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/][Sacha Chua]] for the convenience function :D
-Functions and hooks that begin an org-clock entry when state changes to NOW
-and end when state changes to WAITING.
-: #+begin_src emacs-lisp
-	 (eval-after-load 'org
-	 	'(progn
-	 		 (defun wicked/org-clock-in-if-starting ()
-	 			 "Clock in when the task is marked NOW."
-	 			 (when (and (string= state "NOW")
-	 			(not (string= last-state state)))
-	 	 (org-clock-in)))
-	 		 (add-hook 'org-after-todo-state-change-hook
-	 				 'wicked/org-clock-in-if-starting)
-	 		 (defadvice org-clock-in (after wicked activate)
-	 			"Set this task's status to 'NOW'."
-	 			(org-todo "NOW"))
-	 		(defun wicked/org-clock-out-if-waiting ()
-	 			"Clock out when the task is marked WAITING."
-	 			(when (and (string= state "WAITING")
-	 								 (equal (marker-buffer org-clock-marker) (current-buffer))
-	 								 (< (point) org-clock-marker)
-	 					 (> (save-excursion (outline-next-heading) (point))
-	 				org-clock-marker)
-	 		 (not (string= last-state state)))
-	 	(org-clock-out)))
-	 		(add-hook 'org-after-todo-state-change-hook
-	 				'wicked/org-clock-out-if-waiting)))
-#+end_src
-
-
 ** org-agenda
 [[https://orgmode.org/manual/Agenda-Views.html][All you ever wanted to know.]]
 *** Tell org-agenda where to look
@@ -612,17 +584,15 @@ and end when state changes to WAITING.
 	(setq org-agenda-start-on-weekday nil) ; start today
 
 #+end_src
-
-*** column view headings: Task Total-Time Time-Stamp, use Cc Cx Cc, q to exit
-#+begin_src emacs-lisp
-(setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
-#+end_src
 ** org tag alist - tags I care about
 #+begin_src emacs-lisp
 (setq org-tag-alist '(("dev" . d) ("personal" . ?p) ("research" . ?r) ("main" . ?m)))
 #+end_src
 
 ** Org-roam - Cc n [lfgic]
+Currently using Bear over org-roam. May increase usage gradually over time,
+especially on Linux.
+
 [[https://www.orgroam.com/manual/][documentation]] and [[https://github.com/org-roam/org-roam][source]]. Get used to zettelkastening up some notas.
 *** Setup Company, set keys
 #+begin_src emacs-lisp
@@ -677,11 +647,6 @@ and end when state changes to WAITING.
 (setq org-roam-graph-viewer "/Applications/Safari.app/Contents/MacOS/safari")
 #+end_src
 
-*** Org-roam-protocol
-#+begin_src emacs-lisp
-
-#+end_src
-
 * Prog'n General
 ** Tab width (I like 2)
 #+begin_src emacs-lisp
@@ -697,20 +662,22 @@ just kidding, looks like this [[https://www.flycheck.org/en/latest/user/error-in
   :init (global-flycheck-mode)) ; test
 #+end_src
 
-* LSP
-[[https://emacs-lsp.github.io/lsp-mode/page/installation/][lsp installation guide]].
+** LSP
+[[https://emacs-lsp.github.io/lsp-mode/page/installation/][lsp guide]].
 [[https://github.com/Alexander-Miller/treemacs][treemacs.]]
 Try: =lsp-treemacs-quick-fix= or =x= when at an error list
 #+begin_src emacs-lisp
 	(setq lsp-keymap-prefix "M-n")
 	(use-package lsp-mode
-			:hook (rust-mode . lsp)
+			:hook (rustic-mode . lsp)
+			:hook (sh-mode . lsp)
+			:hook(go-mode . lsp)
 			:commands lsp)
 	;; optionally
 	(use-package lsp-ui :commands lsp-ui-mode)
-  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+	(use-package lsp-ivy :commands lsp-ivy-workspa ce-symbol)
 	(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-  (use-package dap-mode) ; debugger - no dap-rust yet
+	(use-package dap-mode) ; debugger - no dap-rust yet
 	;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 #+end_src
 
@@ -725,11 +692,22 @@ cargo install cargo-audit
 rustup component add rustfmt-preview
 ** Rustic & Rust-analyzer. Racer m
 [[https://github.com/brotzeit/rustic][Rustic mode.]] Simple extension of rust-mode.
-[[https://rust-analyzer.github.io/manual.html][Rust-analyzer]]. Great docs.
-Of Note: =lsp-rust-analyzer-expand-macro=, =rustic-<>=, =lsp-execute-code-action=
+[[https://rust-analyzer.github.io/manual.html][Rust-analyzer]]. In alpha. Great docs. Requires a little setup.
 #+begin_src emacs-lisp
 (use-package rustic)  ; many nifty convenience functions. defaults to rust-analyzer > rls
+(setq rustic-lsp-server 'rust-analyzer)
+(setq lsp-rust-analyzer-server-command '("~/.cargo/bin/rust-analyzer"))
+(custom-set-faces
+  '(rustic-compilation-error ((t (:foreground "Red"))))
+  '(rustic-compilation-warning ((t (:foreground "Red"))))
+  '(rustic-compilation-message ((t (:foreground "Red"))))
+  '(rustic-compilation-info ((t (:foreground "Blue"))))
+  '(rustic-compilation-line ((t (:foreground "Blue")))))
+
 #+end_src
+
+#+RESULTS:
+
 *** Rust-mode, unnecessary with rustic. Kept in case I revert
 : #+begin_src emacs-lisp
   (use-package rust-mode
@@ -746,14 +724,14 @@ Of Note: =lsp-rust-analyzer-expand-macro=, =rustic-<>=, =lsp-execute-code-action
 #+end_src
 ** =Racer= - autocompletion and docs with company
 [[https://github.com/racer-rust/emacs-racer][racer docs]]. Code auto-completion and find definitions.
-: #+begin_src emacs-lisp
-		(use-package racer
-		:config (setq company-tooltip-align-annotations t)
-		:hook ((rust-mode . racer-mode)
-		(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
-		(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
-		:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
-	;	(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+#+begin_src emacs-lisp
+			(use-package racer
+			:config (setq company-tooltip-align-annotations t)
+			:hook ((rust-mode . racer-mode)
+			(rust-mode . rustic-mode)
+			(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
+			(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
+			:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
 #+end_src
 
 ** =rust-playground= get a rust playground for snippets.
@@ -871,13 +849,35 @@ If I’m writing in Emacs lisp I’d like to use =eldoc-mode= to display documen
 
 ** =Flycheck=
 #+begin_src emacs-lisp
-(use-package flycheck-package)
+(use-package flycheck-package) ; should b called emacs-lisp flycheck
 (eval-after-load 'flycheck
   '(flycheck-package-setup))
 #+end_src
 
+* Solidity
+[[https://github.com/ethereum/emacs-solidity][solidity mode]].
+#+begin_src emacs-lisp
+(use-package solidity-mode)
+; optionals
+(setq solidity-comment-style 'slash) ; 'star by default
+; optional keybinds
+(define-key solidity-mode-map (kbd "C-c C-g") 'solidity-estimate-gas-at-point)
+; provide path to solc and solium binaries ;  these are overlapping checkers and can be used simultaneously
+; (setq solidity-solc-path "/bin")
+; (setq solidity-solium-path "/home/lefteris/.npm-global/bin/solium")
+(use-package 'solidity-flycheck)
+(setq solidity-flycheck-solc-checker-active t)
+(setq solidity-flycheck-solium-checker-active t)
+; (setq flycheck-solidity-solc-addstd-contracts t) ; enable to include standard contracts
+(use-package company-solidity)
+(add-hook 'solidity-mode-hook
+	(lambda ()
+	(set (make-local-variable 'company-backends)
+		(append '((company-solidity company-capf company-dabbrev-code))
+			company-backends))))
+#+end_src
 * Shell
-[[https://github.com/Alexander-Miller/company-shell][company shell docs]] autocompletes
+[[Https://github.com/Alexander-Miller/company-shell][company shell docs]] autocompletes
 #+begin_src emacs-lisp
 (use-package company-shell)
 (add-to-list 'company-backends 'company-shell)
@@ -989,31 +989,6 @@ The fat Auctex manual lives [[https://www.gnu.org/software/auctex/manual/auctex.
 get [[https://github.com/vibhavp/emacs-xkcd][xkcd]]. Turns out this makes it impossible to reload for unknown reasons.
 	(use-package xkcd)
 	(global-set-key (kbd "<f4>") 'xkcd)
-** LSP- too much fiddling, use eglot instead
-;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-;(setq lsp-keymap-prefix "s-l")
-
-;(use-package lsp-mode
-;    :init
-;    (add-hook 'prog-mode-hook 'lsp-mode))
-;    :config
-;    (use-package lsp-flycheck
-;        :ensure f ; comes with lsp-mode
-;        :after flycheck))
-;    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-;            (rust-mode . lsp)
-            ;; if you want which-key integration
-            ;(lsp-mode . lsp-enable-which-key-integration)
-;    :commands lsp)
-
-;; optionally
-;(use-package lsp-ui :commands lsp-ui-mode)
-;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-;; optionally if you want to use debugger
-;;(use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 ** =notmuch= email client - too much fiddling
 [[https://notmuchmail.org/notmuch-emacs/][notmuch emacs docs]] reminder to download and install notmuch first
 (use-package notmuch)

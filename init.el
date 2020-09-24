@@ -85,9 +85,11 @@
  '(org-roam-directory "~/org/roam")
  '(package-selected-packages
 	 (quote
-		(free-keys dap-mode rustic eglot forge centaur-tabs zoom poet-theme emojify all-the-icons xkcd rustic-mode lsp-ui lsp-ivy lsp-mode workgroups2 ob-go yasnippet-snippets company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
+		(free-keys dap-mode rustic eglot forge centaur-tabs zoom poet-theme emojify all-the-icons xkcd rustic-mode lsp-ui lsp-ivy lsp-mode ob-go yasnippet-snippets company-shell notmuch company-org-roam company-graphviz-dot graphviz-dot-mode auctex which-key use-package solarized-theme simpleclip rust-playground rg rainbow-delimiters racer py-autopep8 paredit ob-rust moody minions magit ivy-rich go-errcheck flycheck-rust flycheck-package elpy dumb-jump diff-hl deadgrep counsel-projectile company-jedi company-go cargo avy auto-compile)))
  '(pos-tip-background-color "#32302f")
  '(pos-tip-foreground-color "#bdae93")
+ '(rustic-ansi-faces
+	 ["black" "orange3" "green4" "orange3" "lightblue" "pink" "pink" "white"])
  '(setq "%<%Y%m%d%H%M%S>" t)
  '(smartrep-mode-line-active-bg (solarized-color-blend "#98971a" "#32302f" 0.2))
  '(term-default-bg-color "#282828")
@@ -167,4 +169,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(rustic-compilation-column ((t (:inherit compilation-column-number))))
+ '(rustic-compilation-error ((t (:foreground "Red"))))
+ '(rustic-compilation-info ((t (:inherit compilation-info))))
+ '(rustic-compilation-line ((t (:inherit compilation-line))))
+ '(rustic-compilation-message ((t (:inherit compilation-messape))))
+ '(rustic-compilation-warning ((t (:inherit compilation-warning))))
+ '(rustic-message ((t nil))))

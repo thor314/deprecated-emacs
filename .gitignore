@@ -11,4 +11,5 @@ rust-playground
 transient
 url
 .lsp-session-v1
-.cache/
+.cache
+.dap-breakpoints

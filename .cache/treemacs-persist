@@ -1,7 +1,0 @@
-* Default
-** clap
- - path :: ~/rust/libraries/clap
-** clap-2.33.3
- - path :: ~/.cargo/registry/src/github.com-1ecc6299db9ec823/clap-2.33.3
-** fuzzer
- - path :: ~/rust/libraries/fuzzer
