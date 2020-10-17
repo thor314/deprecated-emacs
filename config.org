@@ -249,14 +249,14 @@ Return and indent instead of just return
 *** Autofill, electric pair, linum, highlighting
 line numberings. And highlighting current line. and highlighting differences on
 git tracked files.
+[[https://github.com/dgutov/diff-hl][diff-hl-mode]]
 #+begin_src emacs-lisp
-  (add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
+	(add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
 	(global-linum-mode 1)
 	(global-hl-line-mode)
 	(setq electric-pair-mode 1)
-	(use-package diff-hl
-  :config
-	(global-diff-hl-mode))
+	(use-package diff-hl)
+	(global-diff-hl-mode)
 #+end_src
 
 *** Remove things
@@ -296,9 +296,9 @@ minions mode changes what minor are listed in the bar
   (minions-mode 1))
 #+end_src
 
-** Turn on flyspell check in text mode
+** [off] Turn on flyspell check in text mode
 [[https://www.emacswiki.org/emacs/FlySpell][emacswiki flyspell]]
-#+begin_src emacs-lisp
+;#+begin_src emacs-lisp
 	(dolist (hook '(text-mode-hook)) ; when entering text mode
 				(add-hook hook (lambda () (flyspell-mode 1)))) ; add hook to turn on flyspell
 	;(add-hook 'prog-mode-hook ; turn on flyspell in comments of programming modes
@@ -306,7 +306,7 @@ minions mode changes what minor are listed in the bar
 	;						(flyspell-prog-mode)
 	;					))
 	(setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
-#+end_src
+;#+end_src
 Toy with this for awhile, then try out [[https://github.com/d12frosted/flyspell-correct][flyspell-correct]] and [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-ivy-interface][ivy interface]] later
 [[http://ergoemacs.org/emacs/emacs_spell_checker_problems.html][Xah has problems and solutions with flyspell if these don't work.]]
 ** work groups for remembering window setup ; Cc z [c/v/Cs/Cf]
@@ -596,45 +596,41 @@ especially on Linux.
 [[https://www.orgroam.com/manual/][documentation]] and [[https://github.com/org-roam/org-roam][source]]. Get used to zettelkastening up some notas.
 *** Setup Company, set keys
 #+begin_src emacs-lisp
-  (use-package company-org-roam)
-  (setq org-roam-completion-system 'ivy)
-	(use-package org-roam
-				:hook
-				(after-init . org-roam-mode)
-				:custom ; adjust graph dot executable
-				(org-roam-directory "~/org/roam")
-				(setq org-roam-tag-sources '(prop all-directories)) ; tag all intermediate dirs
-				:bind (:map org-roam-mode-map
-								(("C-c n l" . org-roam)
-								 ("C-c n f" . org-roam-find-file)
-								 ("C-c n g" . org-roam-graph))
-								:map org-mode-map
-								(("C-c n i" . org-roam-insert))
-								(("C-c n c" . org-roam-capture))
-;								(("C-c n I" . org-roam-insert-immediate))
-))
+		(use-package company-org-roam)
+		(setq org-roam-completion-system 'ivy)
+		(use-package org-roam
+					:hook
+					(after-init . org-roam-mode)
+					:custom ; adjust graph dot executable
+					(org-roam-directory "~/org/roam")
+					(setq org-roam-tag-sources '(prop all-directories)) ; tag all intermediate dirs
+					:bind (:map org-roam-mode-map
+									(("C-c n l" . org-roam)
+									 ("C-c n f" . org-roam-find-file)
+									 ("C-c n g" . org-roam-graph))
+									:map org-mode-map
+									(("C-c n i" . org-roam-insert))
+									(("C-c n c" . org-roam-capture))
+	;								(("C-c n I" . org-roam-insert-immediate))
+	))
 #+end_src
 
 *** Set roam-capture templates
 #+begin_src emacs-lisp
-	 (setq org-roam-capture--file-name-default "<%Y-%m%-%d>")
-	 (setq org-roam-capture-templates
-					'(("p" "paper" plain (function org-roam--capture-get-point)
-						 "%?"
-						 :file-name "paper/${topic}/${subtopic}/${slug}"
-						 :head: "#+title: ${title}\n"
-						 :unnarrowed t)
-					("w" "web" plain (function org-roam--capture-get-point)
-					 "%?"
-					 :file-name "web/${topic}/${subtopic}/${slug}"
-					 :head "#+title: ${title}\n"
-					 :unnarrowed t)
-					("b" "book" plain (function org-roam--capture-get-point)
-					 "%?"
-					 :file-name "book/${topic}/${slug}"
-					 :head "#+title: ${title}\n"
-					 :unnarrowed t)
-))
+	(setq org-roam-capture--file-name-default "<%Y-%m%-%d>")
+	(setq org-roam-capture-templates
+				 ;; '(("p" "paper" plain (function org-roam--capture-get-point)
+				 ;; 	 "%?"
+				 ;; 	 :file-name "paper/${topic}/${subtopic}/${slug}"
+				 ;; 	 :head: "#+title: ${title}\n"
+				 ;; 	 :unnarrowed t)
+				 '(("w" "web" plain (function org-roam--capture-get-point)
+					"%?"
+					:file-name "web/${topic}/${subtopic}/${slug}"
+					:head "#+title: ${title}\n"
+					:unnarrowed t
+					)
+					 ))
 #+end_src
 
 *** relies on Graphviz for graph visualisation. CMq, TAB, M; CcCc, Cx `, Cc Cp, Cc v
@@ -644,7 +640,7 @@ especially on Linux.
 (use-package graphviz-dot-mode
   :config
 (setq graphviz-dot-indent-width 4))
-(setq org-roam-graph-viewer "/Applications/Safari.app/Contents/MacOS/safari")
+;(setq org-roam-graph-viewer "/Applications/Safari.app/Contents/MacOS/safari")
 #+end_src
 
 * Prog'n General
@@ -670,7 +666,7 @@ Try: =lsp-treemacs-quick-fix= or =x= when at an error list
 	(setq lsp-keymap-prefix "M-n")
 	(use-package lsp-mode
 			:hook (rustic-mode . lsp)
-			:hook (sh-mode . lsp)
+;			:hook (sh-mode . lsp)
 			:hook(go-mode . lsp)
 			:commands lsp)
 	;; optionally
@@ -686,11 +682,10 @@ Try: =lsp-treemacs-quick-fix= or =x= when at an error list
 rustup component add rls rust-analysis rust-src
 cargo +nightly install racer
 cargo install cargo-check
-cargo install clippy
 cargo install cargo-edit  - {add,rm,upgrade} crates from toml
 cargo install cargo-audit
 rustup component add rustfmt-preview
-** Rustic & Rust-analyzer. Racer m
+** Rustic & Rust-analyzer
 [[https://github.com/brotzeit/rustic][Rustic mode.]] Simple extension of rust-mode.
 [[https://rust-analyzer.github.io/manual.html][Rust-analyzer]]. In alpha. Great docs. Requires a little setup.
 #+begin_src emacs-lisp
@@ -703,18 +698,15 @@ rustup component add rustfmt-preview
   '(rustic-compilation-message ((t (:foreground "Red"))))
   '(rustic-compilation-info ((t (:foreground "Blue"))))
   '(rustic-compilation-line ((t (:foreground "Blue")))))
-
 #+end_src
 
-#+RESULTS:
-
 *** Rust-mode, unnecessary with rustic. Kept in case I revert
-: #+begin_src emacs-lisp
+#+begin_src emacs-lisp
   (use-package rust-mode
     :config
 		(hrs/append-to-path "~/.cargo/bin")
     (setq rust-format-on-save t))
-: #+end_src
+#+end_src
 
 ** Setup cargo
 [[https://github.com/kwrooijen/cargo.el][cargo.el.]]
@@ -732,6 +724,8 @@ rustup component add rustfmt-preview
 			(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
 			(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
 			:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
+; this should be set in .zprofile but be pedantic
+	(setenv "RUST_SRC_PATH" "/home/thor/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library")
 #+end_src
 
 ** =rust-playground= get a rust playground for snippets.
@@ -865,9 +859,9 @@ If I’m writing in Emacs lisp I’d like to use =eldoc-mode= to display documen
 ; provide path to solc and solium binaries ;  these are overlapping checkers and can be used simultaneously
 ; (setq solidity-solc-path "/bin")
 ; (setq solidity-solium-path "/home/lefteris/.npm-global/bin/solium")
-(use-package 'solidity-flycheck)
-(setq solidity-flycheck-solc-checker-active t)
-(setq solidity-flycheck-solium-checker-active t)
+;(use-package 'solidity-flycheck)
+;(setq solidity-flycheck-solc-checker-active t)
+;(setq solidity-flycheck-solium-checker-active t)
 ; (setq flycheck-solidity-solc-addstd-contracts t) ; enable to include standard contracts
 (use-package company-solidity)
 (add-hook 'solidity-mode-hook

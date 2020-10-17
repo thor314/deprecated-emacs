@@ -148,9 +148,8 @@
 (global-linum-mode 1)
 (global-hl-line-mode)
 (setq electric-pair-mode 1)
-(use-package diff-hl
-:config
-(global-diff-hl-mode))
+(use-package diff-hl)
+(global-diff-hl-mode)
 
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -174,14 +173,6 @@
 ;  (setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
 ;        minions-mode-line-delimiters '("" . ""))
   (minions-mode 1))
-
-(dolist (hook '(text-mode-hook)) ; when entering text mode
-			(add-hook hook (lambda () (flyspell-mode 1)))) ; add hook to turn on flyspell
-;(add-hook 'prog-mode-hook ; turn on flyspell in comments of programming modes
-;					(lambda ()
-;						(flyspell-prog-mode)
-;					))
-(setq flyspell-issue-message-flag nil) ; printing messages for every word slows down perf
 
 (use-package ivy)
 (use-package swiper) ; search extension to ivy
@@ -310,7 +301,7 @@
 (setq org-tag-alist '(("dev" . d) ("personal" . ?p) ("research" . ?r) ("main" . ?m)))
 
 (use-package company-org-roam)
-  (setq org-roam-completion-system 'ivy)
+	(setq org-roam-completion-system 'ivy)
 	(use-package org-roam
 				:hook
 				(after-init . org-roam-mode)
@@ -328,29 +319,25 @@
 ))
 
 (setq org-roam-capture--file-name-default "<%Y-%m%-%d>")
-	 (setq org-roam-capture-templates
-					'(("p" "paper" plain (function org-roam--capture-get-point)
-						 "%?"
-						 :file-name "paper/${topic}/${subtopic}/${slug}"
-						 :head: "#+title: ${title}\n"
-						 :unnarrowed t)
-					("w" "web" plain (function org-roam--capture-get-point)
-					 "%?"
-					 :file-name "web/${topic}/${subtopic}/${slug}"
-					 :head "#+title: ${title}\n"
-					 :unnarrowed t)
-					("b" "book" plain (function org-roam--capture-get-point)
-					 "%?"
-					 :file-name "book/${topic}/${slug}"
-					 :head "#+title: ${title}\n"
-					 :unnarrowed t)
-))
+(setq org-roam-capture-templates
+			 ;; '(("p" "paper" plain (function org-roam--capture-get-point)
+			 ;; 	 "%?"
+			 ;; 	 :file-name "paper/${topic}/${subtopic}/${slug}"
+			 ;; 	 :head: "#+title: ${title}\n"
+			 ;; 	 :unnarrowed t)
+			 '(("w" "web" plain (function org-roam--capture-get-point)
+				"%?"
+				:file-name "web/${topic}/${subtopic}/${slug}"
+				:head "#+title: ${title}\n"
+				:unnarrowed t
+				)
+				 ))
 
 (setq org-roam-graph-executable "/usr/local/bin/dot")
 (use-package graphviz-dot-mode
   :config
 (setq graphviz-dot-indent-width 4))
-(setq org-roam-graph-viewer "/Applications/Safari.app/Contents/MacOS/safari")
+;(setq org-roam-graph-viewer "/Applications/Safari.app/Contents/MacOS/safari")
 
 (setq-default tab-width 2)
 
@@ -359,38 +346,45 @@
   :init (global-flycheck-mode)) ; test
 
 (setq lsp-keymap-prefix "M-n")
-(use-package lsp-mode
-		:hook (rustic-mode . lsp)
-		:hook (sh-mode . lsp)
-		:hook(go-mode . lsp)
-		:commands lsp)
-;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
-(use-package lsp-ivy :commands lsp-ivy-workspa ce-symbol)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-(use-package dap-mode) ; debugger - no dap-rust yet
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+	(use-package lsp-mode
+			:hook (rustic-mode . lsp)
+;			:hook (sh-mode . lsp)
+			:hook(go-mode . lsp)
+			:commands lsp)
+	;; optionally
+	(use-package lsp-ui :commands lsp-ui-mode)
+	(use-package lsp-ivy :commands lsp-ivy-workspa ce-symbol)
+	(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+	(use-package dap-mode) ; debugger - no dap-rust yet
+	;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
 (use-package rustic)  ; many nifty convenience functions. defaults to rust-analyzer > rls
 (setq rustic-lsp-server 'rust-analyzer)
 (setq lsp-rust-analyzer-server-command '("~/.cargo/bin/rust-analyzer"))
 (custom-set-faces
   '(rustic-compilation-error ((t (:foreground "Red"))))
-  '(rustic-compilation-warning ((t (:inherit compilation-warning))))
-  '(rustic-compilation-message ((t (:inherit compilation-messape))))
-  '(rustic-compilation-info ((t (:inherit compilation-info))))
-  '(rustic-compilation-line ((t (:inherit compilation-line)))))
+  '(rustic-compilation-warning ((t (:foreground "Red"))))
+  '(rustic-compilation-message ((t (:foreground "Red"))))
+  '(rustic-compilation-info ((t (:foreground "Blue"))))
+  '(rustic-compilation-line ((t (:foreground "Blue")))))
+
+(use-package rust-mode
+  :config
+	(hrs/append-to-path "~/.cargo/bin")
+  (setq rust-format-on-save t))
 
 (use-package cargo)
 (use-package toml-mode)
 
 (use-package racer
-:config (setq company-tooltip-align-annotations t)
-:hook ((rust-mode . racer-mode)
-(rust-mode . rustic-mode)
-(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
-(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
-:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
+			:config (setq company-tooltip-align-annotations t)
+			:hook ((rust-mode . racer-mode)
+			(rust-mode . rustic-mode)
+			(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
+			(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
+			:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
+; this should be set in .zprofile but be pedantic
+	(setenv "RUST_SRC_PATH" "/home/thor/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library")
 
 (use-package rust-playground)
 
@@ -453,9 +447,28 @@
   :config
   (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
 
-(use-package flycheck-package)
+(use-package flycheck-package) ; should b called emacs-lisp flycheck
 (eval-after-load 'flycheck
   '(flycheck-package-setup))
+
+(use-package solidity-mode)
+; optionals
+(setq solidity-comment-style 'slash) ; 'star by default
+; optional keybinds
+(define-key solidity-mode-map (kbd "C-c C-g") 'solidity-estimate-gas-at-point)
+; provide path to solc and solium binaries ;  these are overlapping checkers and can be used simultaneously
+; (setq solidity-solc-path "/bin")
+; (setq solidity-solium-path "/home/lefteris/.npm-global/bin/solium")
+;(use-package 'solidity-flycheck)
+;(setq solidity-flycheck-solc-checker-active t)
+;(setq solidity-flycheck-solium-checker-active t)
+; (setq flycheck-solidity-solc-addstd-contracts t) ; enable to include standard contracts
+(use-package company-solidity)
+(add-hook 'solidity-mode-hook
+	(lambda ()
+	(set (make-local-variable 'company-backends)
+		(append '((company-solidity company-capf company-dabbrev-code))
+			company-backends))))
 
 (use-package company-shell)
 (add-to-list 'company-backends 'company-shell)
