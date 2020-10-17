@@ -1,4 +1,3 @@
-Use C-c ' when editing src for nice things like flycheck
 * configure =use-package= and path
 ** Do the stuff
 =use-package= is 'require on [[https://duckduckgo.com/?q=usepackage+emacs&t=brave&ia=software][steroids]]. It downloads things for me. Yay.

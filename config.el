@@ -370,7 +370,7 @@
 
 (use-package rust-mode
   :config
-	(hrs/append-to-path "~/.cargo/bin")
+	      (hrs/append-to-path "~/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package cargo)
