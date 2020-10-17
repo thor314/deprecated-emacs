@@ -250,7 +250,7 @@ line numberings. And highlighting current line. and highlighting differences on
 git tracked files.
 [[https://github.com/dgutov/diff-hl][diff-hl-mode]]
 #+begin_src emacs-lisp
-	(add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
+	(add-hook 'text-mode-hook 'turn-on-auto-fill)
 	(global-linum-mode 1)
 	(global-hl-line-mode)
 	(setq electric-pair-mode 1)
@@ -716,42 +716,41 @@ rustup component add rustfmt-preview
 ** =Racer= - autocompletion and docs with company
 [[https://github.com/racer-rust/emacs-racer][racer docs]]. Code auto-completion and find definitions.
 #+begin_src emacs-lisp
-			(use-package racer
-			:config (setq company-tooltip-align-annotations t)
-			:hook ((rust-mode . racer-mode)
-			(rust-mode . rustic-mode)
-			(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
-			(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
-			:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
-; this should be set in .zprofile but be pedantic
-	(setenv "RUST_SRC_PATH" "/home/thor/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library")
+  ; testing, possibly useful on Starchy
+	;(setenv "RUST_SRC_PATH" "/home/thor/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library")
+	(use-package racer
+	:config (setq company-tooltip-align-annotations t)
+	:hook ((rust-mode . racer-mode)
+	(rust-mode . rustic-mode)
+	(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
+	(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
+	:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
 #+end_src
 
-** =rust-playground= get a rust playground for snippets.
-Usage: M-x rust-playground(-exec|rm)?
-Note ctl-ret is bound in playgrounds for compile
-#+begin_src emacs-lisp
-	(use-package rust-playground)
-#+end_src
-
-** For literate Rust evaluation, there's =org-babel=!
-#+begin_src emacs-lisp
-	(use-package ob-rust)
-#+end_src
 ** Hooks - flycheck, compile command
 Also, use C-c p to throw a debug println in.
 #+begin_src emacs-lisp
 	(use-package flycheck-rust) ; runs on save buffer
 	(with-eval-after-load 'rust-mode
 			(add-hook 'flycheck-mode-hook 'flycheck-rust-setup))
-
 	(add-hook 'rust-mode-hook
 			(lambda ()
 			(setq cargo-minor-mode t) ; Cc Cc C(b/r/t)
-			(local-set-key (kbd "C-h C-h") 'racer-describe-tooltip)
 		))
 #+end_src
 
+** =Playground= and =org-babel-rust=
+*** =rust-playground= get a rust playground for snippets.
+Usage: M-x rust-playground(-exec|rm)?
+Note ctl-ret is bound in playgrounds for compile
+#+begin_src emacs-lisp
+	(use-package rust-playground)
+#+end_src
+
+*** For literate Rust evaluation, there's =org-babel=!
+#+begin_src emacs-lisp
+	(use-package ob-rust)
+#+end_src
 * Go
 ** Install =go-mode= and related packages:
 #+begin_src emacs-lisp
@@ -869,6 +868,7 @@ If I’m writing in Emacs lisp I’d like to use =eldoc-mode= to display documen
 		(append '((company-solidity company-capf company-dabbrev-code))
 			company-backends))))
 #+end_src
+
 * Shell
 [[Https://github.com/Alexander-Miller/company-shell][company shell docs]] autocompletes
 #+begin_src emacs-lisp

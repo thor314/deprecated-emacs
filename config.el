@@ -144,7 +144,7 @@
 
 (setq subword-mode t)
 
-(add-hook 'text-mode-hook 'turn-on-auto-fill) ;test
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
 (global-linum-mode 1)
 (global-hl-line-mode)
 (setq electric-pair-mode 1)
@@ -370,35 +370,33 @@
 
 (use-package rust-mode
   :config
-	      (hrs/append-to-path "~/.cargo/bin")
+	(hrs/append-to-path "~/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package cargo)
 (use-package toml-mode)
 
+; testing, possibly useful on Starchy
+;(setenv "RUST_SRC_PATH" "/home/thor/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library")
 (use-package racer
-			:config (setq company-tooltip-align-annotations t)
-			:hook ((rust-mode . racer-mode)
-			(rust-mode . rustic-mode)
-			(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
-			(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
-			:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
-; this should be set in .zprofile but be pedantic
-	(setenv "RUST_SRC_PATH" "/home/thor/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library")
-
-(use-package rust-playground)
-
-(use-package ob-rust)
+:config (setq company-tooltip-align-annotations t)
+:hook ((rust-mode . racer-mode)
+(rust-mode . rustic-mode)
+(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
+(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
+:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
 
 (use-package flycheck-rust) ; runs on save buffer
 (with-eval-after-load 'rust-mode
 		(add-hook 'flycheck-mode-hook 'flycheck-rust-setup))
-
 (add-hook 'rust-mode-hook
 		(lambda ()
 		(setq cargo-minor-mode t) ; Cc Cc C(b/r/t)
-		(local-set-key (kbd "C-h C-h") 'racer-describe-tooltip)
 	))
+
+(use-package rust-playground)
+
+(use-package ob-rust)
 
 (use-package go-mode)
 (use-package go-errcheck)
