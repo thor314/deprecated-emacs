@@ -10,6 +10,11 @@
 (sensible-defaults/use-all-keybindings)
 (sensible-defaults/backup-to-temp-directory)
 
+(get-buffer-create buffer)
+(with-current-buffer)
+(or nil nil nil (message "hi") (message "bye"))
+
+
 (defun reload ()
 		"shorcut to reload init file"
 		(interactive)
@@ -161,18 +166,12 @@
 (setq line-number-mode t)
 
 (use-package moody
-  :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode)
-  (setq size-indication-mode t) ; display how long file is in modeline
-)
-
-(use-package minions
-  :config
-;  (setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
-;        minions-mode-line-delimiters '("" . ""))
-  (minions-mode 1))
+	:config
+	(setq x-underline-at-descent-line t)
+	(moody-replace-mode-line-buffer-identification)
+	(moody-replace-vc-mode))
+(use-package minions)
+(minions-mode 1)
 
 (use-package ivy)
 (use-package swiper) ; search extension to ivy
@@ -215,11 +214,6 @@
 
 (use-package magit)
 (use-package forge)
-
-(use-package exec-path-from-shell
-:init (exec-path-from-shell-initialize)
-:config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
-(exec-path-from-shell-initialize)))
 
 (use-package rg)
 (hrs/append-to-path "/usr/local/bin") ; oddly wasn't globally in path, fixing that
@@ -300,23 +294,21 @@
 
 (setq org-tag-alist '(("dev" . d) ("personal" . ?p) ("research" . ?r) ("main" . ?m)))
 
+(use-package org-roam
+					:hook
+					(after-init . org-roam-mode)
+					:custom ; adjust graph dot executable
+					(org-roam-directory "~/org/roam")
+					:bind (:map org-roam-mode-map (
+									 ("C-c n f" . org-roam-find-file)
+									 ("C-c n g" . org-roam-graph))
+									:map org-mode-map
+									(("C-c n i" . org-roam-insert))
+									(("C-c n c" . org-roam-capture))
+								(("C-c n I" . org-roam-insert-immediate))
+								))
 (use-package company-org-roam)
-	(setq org-roam-completion-system 'ivy)
-	(use-package org-roam
-				:hook
-				(after-init . org-roam-mode)
-				:custom ; adjust graph dot executable
-				(org-roam-directory "~/org/roam")
-				(setq org-roam-tag-sources '(prop all-directories)) ; tag all intermediate dirs
-				:bind (:map org-roam-mode-map
-								(("C-c n l" . org-roam)
-								 ("C-c n f" . org-roam-find-file)
-								 ("C-c n g" . org-roam-graph))
-								:map org-mode-map
-								(("C-c n i" . org-roam-insert))
-								(("C-c n c" . org-roam-capture))
-;								(("C-c n I" . org-roam-insert-immediate))
-))
+(setq org-roam-completion-system 'ivy)
 
 (setq org-roam-capture--file-name-default "<%Y-%m%-%d>")
 (setq org-roam-capture-templates
@@ -370,21 +362,21 @@
 
 (use-package rust-mode
   :config
-	(hrs/append-to-path "~/.cargo/bin")
+	      (hrs/append-to-path "~/.cargo/bin")
   (setq rust-format-on-save t))
 
 (use-package cargo)
 (use-package toml-mode)
 
 ; testing, possibly useful on Starchy
-;(setenv "RUST_SRC_PATH" "/home/thor/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library")
-(use-package racer
-:config (setq company-tooltip-align-annotations t)
-:hook ((rust-mode . racer-mode)
-(rust-mode . rustic-mode)
-(add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
-(racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
-:bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
+      ;(setenv "RUST_SRC_PATH" "/home/thor/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library")
+      (use-package racer
+      :config (setq company-tooltip-align-annotations t)
+      :hook ((rust-mode . racer-mode)
+      (rust-mode . rustic-mode)
+      (add-racer-mode . eldoc-mode) ; shows in echo area the arg list of the fn at point
+      (racer-mode . company-mode)) ; company autocomplete sometimes slows editor down significantly
+      :bind (:map rust-mode-map ("TAB" . company-indent-or-complete-common)))
 
 (use-package flycheck-rust) ; runs on save buffer
 (with-eval-after-load 'rust-mode

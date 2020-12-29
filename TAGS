@@ -1,0 +1,19 @@
+
+config.el,632
+(defun reload 13,372
+(defun describe-in-popup 45,1275
+(defun describe-thing-in-popup 57,1715
+(defun hrs/rename-file 66,1997
+(defun hrs/generate-scratch-buffer 79,2446
+(defun hrs/kill-current-buffer 85,2628
+(defun hrs/add-auto-mode 90,2760
+(defun hrs/find-file-as-sudo 95,2976
+(defun hrs/region-or-word 101,3145
+(defun hrs/append-to-path 107,3331
+(defun hrs/insert-password 112,3514
+(defun hrs/notify-send 116,3594
+(define-key global-map 129,4066
+(define-key global-map 130,4122
+(define-key projectile-mode-map 208,6553
+(define-key solidity-mode-map 443,14270
+(defun set-frame-size-according-to-resolution 475,15640

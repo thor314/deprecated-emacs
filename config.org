@@ -110,7 +110,7 @@ reload, open config, open zsh profile
 #+end_src
 
 *** Better than C-h <blah>, get help for emacs-lisp thing at point in tooltip. C-h C-h.
-thx [[https://gist.github.com/jasonm23/eea3b4662e2a3028a07e][Jason]]. Get a tooltip for thing at point.
+thx. Get a tooltip for thing at point.
 #+begin_src emacs-lisp
 (defun describe-in-popup (fn)
   (let* ((thing (symbol-at-point))
@@ -275,24 +275,16 @@ lambdas: prettify symbols, column and line number
   (setq line-number-mode t)
 #+end_src
 
-Moody is a pretty mode bar
+[[https://github.com/tarsius/moody][Moody]] is a pretty mode bar
+[[https://github.com/tarsius/minions][minions]] mode changes what minor are listed in the bar
 #+begin_src emacs-lisp
- (use-package moody
-  :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode)
-  (setq size-indication-mode t) ; display how long file is in modeline
-)
-#+end_src
-
-minions mode changes what minor are listed in the bar
-#+begin_src emacs-lisp
-  (use-package minions
-  :config
-;  (setq minions-mode-line-lighter "Hey Thor ;)" ; because why not
-;        minions-mode-line-delimiters '("" . ""))
-  (minions-mode 1))
+	(use-package moody
+		:config
+		(setq x-underline-at-descent-line t)
+		(moody-replace-mode-line-buffer-identification)
+		(moody-replace-vc-mode))
+	(use-package minions)
+	(minions-mode 1)
 #+end_src
 
 ** [off] Turn on flyspell check in text mode
@@ -401,12 +393,11 @@ documentation on forge. Trying [[https://gist.github.com/bmhatfield/cc21ec0a3a2d
 ** =exec-path-from-shell= - magit relies on this
 [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]. gives emacs a look at shell environment variables. Most
 useful on OS X.
- #+begin_src emacs-lisp
- (use-package exec-path-from-shell
- :init (exec-path-from-shell-initialize)
- :config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
- (exec-path-from-shell-initialize)))
- #+end_src
+ # #+begin_src emacs-lisp
+ # (use-package exec-path-from-shell
+ # :config (when (memq window-system '(mac ns x)) ; sets MANPATH, PATH, exec-path-from-shell in osX/linux
+ # (exec-path-from-shell-initialize)))
+ # #+end_src
 ** =rip-grep= - to directory search; C-c k
 [[https://github.com/BurntSushi/ripgrep][ripgrep]] is the fastest implementation of grep, built on Rust's regex engine,
 binary name rg. Usage: =C-c k=. [[https://github.com/dajva/rg.el][rg.el.]] Ties in with counsel.
@@ -595,23 +586,21 @@ especially on Linux.
 [[https://www.orgroam.com/manual/][documentation]] and [[https://github.com/org-roam/org-roam][source]]. Get used to zettelkastening up some notas.
 *** Setup Company, set keys
 #+begin_src emacs-lisp
-		(use-package company-org-roam)
-		(setq org-roam-completion-system 'ivy)
-		(use-package org-roam
-					:hook
-					(after-init . org-roam-mode)
-					:custom ; adjust graph dot executable
-					(org-roam-directory "~/org/roam")
-					(setq org-roam-tag-sources '(prop all-directories)) ; tag all intermediate dirs
-					:bind (:map org-roam-mode-map
-									(("C-c n l" . org-roam)
-									 ("C-c n f" . org-roam-find-file)
-									 ("C-c n g" . org-roam-graph))
-									:map org-mode-map
-									(("C-c n i" . org-roam-insert))
-									(("C-c n c" . org-roam-capture))
-	;								(("C-c n I" . org-roam-insert-immediate))
-	))
+	(use-package org-roam
+						:hook
+						(after-init . org-roam-mode)
+						:custom ; adjust graph dot executable
+						(org-roam-directory "~/org/roam")
+						:bind (:map org-roam-mode-map (
+										 ("C-c n f" . org-roam-find-file)
+										 ("C-c n g" . org-roam-graph))
+										:map org-mode-map
+										(("C-c n i" . org-roam-insert))
+										(("C-c n c" . org-roam-capture))
+									(("C-c n I" . org-roam-insert-immediate))
+									))
+	(use-package company-org-roam)
+	(setq org-roam-completion-system 'ivy)
 #+end_src
 
 *** Set roam-capture templates
